@@ -74,6 +74,30 @@ a{color:var(--pink2)}
 #nav{position:fixed;top:auto;bottom:0;left:0;right:0;width:auto;height:auto;flex-direction:row;padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line);border-right:0;z-index:9;gap:2px}
 #nav .brand{display:none}#nav a{flex-direction:column;gap:0;padding:6px 11px;font-size:11px;white-space:nowrap}main{padding-bottom:100px}}
 @media print{#nav,.noprint,.btn,.x,.add{display:none!important}body{background:#fff;color:#000}.card{box-shadow:none;break-inside:avoid}main{padding:0;max-width:none}.hero{background:#f7e6e3}}
+
+/* Mom Life Planner additions */
+.mlp-floats{position:fixed;right:14px;bottom:88px;z-index:20;display:flex;flex-direction:column;gap:9px;align-items:flex-end}
+.mlp-float{border:1px solid var(--line);background:var(--card);color:var(--ink);box-shadow:var(--sh);border-radius:18px;padding:9px 13px;font:700 13px Nunito,sans-serif}
+.mlp-player{display:flex;align-items:center;gap:8px}
+.mlp-player button,.mlp-account{cursor:pointer}
+.mlp-volume{width:74px!important;accent-color:var(--pink2)}
+.mlp-login{position:fixed;inset:0;z-index:50;background:rgba(35,25,22,.48);display:none;align-items:center;justify-content:center;padding:18px}
+.mlp-login.open{display:flex}
+.mlp-login-card{width:min(100%,410px);background:var(--card);border:1px solid var(--line);border-radius:24px;padding:22px;box-shadow:0 18px 60px rgba(0,0,0,.2)}
+.mlp-login-card h2{font:700 29px 'Cormorant Garamond',serif;margin:0 0 4px;color:var(--pink2)}
+.mlp-login-card input{margin:7px 0 10px}
+.mlp-login-card .btn{width:100%;margin-top:8px}
+.mlp-login-card .secondary{background:var(--sl);color:var(--ink)}
+.mlp-login-status{font-size:12px;color:var(--mut);min-height:18px;margin-top:8px}
+.scrap-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.sticker-picker{display:flex;flex-wrap:wrap;gap:8px}
+.sticker-choice{width:44px;height:44px;border:1px solid var(--line);background:var(--bg);border-radius:14px;font-size:23px;cursor:pointer}
+.scrap-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:10px;margin-top:12px}
+.scrap-tile{position:relative;min-height:110px;border:1px solid var(--line);border-radius:16px;background:var(--bg);display:flex;align-items:center;justify-content:center;overflow:hidden}
+.scrap-tile img{width:100%;height:145px;object-fit:cover}
+.scrap-tile .scrap-emoji{font-size:48px}
+.scrap-tile button{position:absolute;top:4px;right:5px;background:rgba(255,255,255,.88);color:#6b4c43;border:0;border-radius:50%;width:26px;height:26px}
+@media(max-width:860px){.mlp-floats{bottom:82px;right:9px}.mlp-player{gap:5px}.mlp-volume{width:58px!important}}
 </style>
 <link rel="manifest" href="./manifest.json">
 <meta name="theme-color" content="#fbf6ee">
@@ -88,7 +112,7 @@ a{color:var(--pink2)}
 <script>
 const $=s=>document.querySelector(s);
 let S={};try{S=JSON.parse(localStorage.getItem('mlp1'))||{}}catch(x){}
-const save=()=>{try{localStorage.setItem('mlp1',JSON.stringify(S))}catch(x){}};
+const save=()=>{try{localStorage.setItem('mlp1',JSON.stringify(S))}catch(x){};if(window.__mlpCloudSave)window.__mlpCloudSave(S)};
 const now=()=>{const d=new Date();d.setHours(12,0,0,0);return d};
 const iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 let cur=now(),sel='',page='dash',CW=[],SH={};
@@ -118,6 +142,7 @@ const SEC=[
 ['finance','Finance','💰','m','Know where your money goes',[F('fin'),T('budget','Monthly household budget','m',['Category:k','Planned:n','Actual:a','Left:l'],1,['Groceries','Kids','Home','Transport','Health','Fun']),T('inc','Income tracker','m',['Date:d','Source','Amount:n'],2),T('exp','Expenses tracker','m',['Date:d','What','Category:k','Amount:n'],3),T('bills','Bills tracker','m',['Bill','Due:d','Amount:n','Paid:c'],2),T('sav','Savings goals','',['Goal','Target:n','Saved:n','Progress:p']),F('finov')]],
 ['selfcare','Self-care','🌸','d','You matter too, mama',[L('sc','Daily self-care checklist','d','Add something kind for me…',SCDEF),{y:'D',id:'water',t:'Water intake',s:'d',n:8},W('sleep','Sleep tracker','w','num','hrs'),W('mood','Mood tracker','w','mood'),W('ex','Exercise tracker','w','num','min'),L('grat','Gratitude journal','d','I’m grateful for…'),L('pgoals','Personal goals','','A goal for me…'),T('metime','Me-time planner','w',['Day','Time','Activity','Done:c'])]],
 ['journal','Journal','📖','d','Capture the little moments',[N('jr','Daily journal','d','Dear diary…'),L('grat','Things I’m grateful for','d','I’m grateful for…'),T('mem','My motherhood memories','',['Date:d','Memory:x']),T('kidm','Kids’ memorable moments','',['Date:d','Child','Moment:x']),N('mrefl','Monthly reflection','m','What went well? What was hard? What do I want for next month?'),N('growth','Personal growth','m','What am I learning? How am I growing?')]]];
+SEC.push(['scrapbook','Scrapbook','🧸','', 'Keep your favourite little memories in one place',[F('scrapbook')]]);
 const K=w=>w.id+(w.s?'@'+sc(w.s):'');
 const lab=n=>n=='d'?cur.toLocaleDateString(undefined,{weekday:'long',day:'numeric',month:'long',year:'numeric'}):n=='w'?'Week of '+mon(cur).toLocaleDateString(undefined,{day:'numeric',month:'short'}):cur.toLocaleDateString(undefined,{month:'long',year:'numeric'});
 const hr=i=>(i%12||12)+(i<12?' AM':' PM');
@@ -127,7 +152,12 @@ stats:()=>cw(()=>{const D=sc('d'),x=(S['todo@'+D]||[]).concat(S['top3@'+D]||[]),
 ov:()=>card('<h3>Daily overview</h3>'+cw(()=>{const D=sc('d'),o=S['sched@'+D]||{},dn=String((S['meal@'+D]||{})['2_0']||'').trim(),r=[];for(let i=5;i<=22;i++)if(String(o['h'+i]||'').trim())r.push(`<div class="ln"><b>${hr(i)}</b><span>${e(o['h'+i])}</span></div>`);return(r.slice(0,5).join('')||'<p class="mut">Nothing scheduled yet. <a href="#daily">Plan your day →</a></p>')+(dn?`<div class="ln"><b>Dinner</b><span>${e(dn)}</span></div>`:'')},'div')),
 week:()=>card('<h3>Weekly progress</h3>'+cw(()=>{const mo=mon(cur);let tt=0,td=0,h='';for(let i=0;i<7;i++){const d=new Date(mo);d.setDate(mo.getDate()+i);const x=(S['todo@'+iso(d)]||[]).concat(S['top3@'+iso(d)]||[]),dn=x.filter(a=>a.d).length;tt+=x.length;td+=dn;h+=`<div><i style="height:${Math.max(4,x.length?dn/x.length*100:0)}px"></i><small>${DAYS[i]}</small></div>`}const p=tt?td/tt*100:0;return`<div class="wk">${h}</div><div class="bar"><i style="width:${p}%"></i></div><p class="mut">${td} of ${tt} tasks done this week (${Math.round(p)}%)</p>`},'div'),'wide'),
 fin:()=>cw(()=>{const m=sc('m'),inc=sum('inc@'+m,2),ex=sum('exp@'+m,3),bl=sum('bills@'+m,2),lf=inc-ex-bl;return[['Income',inc],['Expenses',ex],['Bills',bl],['Left to spend',lf,lf<0?'neg':''],['Saved so far',sum('sav',2)]].map(([l,v,c])=>`<div class="st"><small>${l}</small><b class="${c||''}">${money(v)}</b></div>`).join('')},'div','stats wide'),
-finov:()=>card('<h3>Family financial overview</h3>'+cw(()=>{const m=sc('m'),cat={},bl=S['bills@'+m]||[];(S['exp@'+m]||[]).forEach(r=>{const c=String(r[2]||'').trim()||'Other';cat[c]=(cat[c]||0)+(+r[3]||0)});const inc=sum('inc@'+m,2),ex=sum('exp@'+m,3),pl=sum('budget@'+m,1),tot=ex||1;return`<div class="ln"><span>Budget used</span><b>${pl?Math.round(ex/pl*100)+'%':'—'}</b></div><div class="ln"><span>Savings rate</span><b>${inc?Math.round((inc-ex-sum('bills@'+m,2))/inc*100)+'%':'—'}</b></div><div class="ln"><span>Bills paid</span><b>${bl.filter(r=>+r[3]).length}/${bl.filter(r=>r[0]||r[2]).length}</b></div><h4>Spending by category</h4>`+(Object.entries(cat).filter(x=>x[1]).sort((a,b)=>b[1]-a[1]).map(([c,v])=>`<div class="ln"><span>${e(c)}</span><b>${money(v)}</b></div><div class="bar"><i style="width:${v/tot*100}%"></i></div>`).join('')||'<p class="mut">Add expenses to see your breakdown.</p>')},'div'))};
+finov:()=>card('<h3>Family financial overview</h3>'+cw(()=>{const m=sc('m'),cat={},bl=S['bills@'+m]||[];(S['exp@'+m]||[]).forEach(r=>{const c=String(r[2]||'').trim()||'Other';cat[c]=(cat[c]||0)+(+r[3]||0)});const inc=sum('inc@'+m,2),ex=sum('exp@'+m,3),pl=sum('budget@'+m,1),tot=ex||1;return`<div class="ln"><span>Budget used</span><b>${pl?Math.round(ex/pl*100)+'%':'—'}</b></div><div class="ln"><span>Savings rate</span><b>${inc?Math.round((inc-ex-sum('bills@'+m,2))/inc*100)+'%':'—'}</b></div><div class="ln"><span>Bills paid</span><b>${bl.filter(r=>+r[3]).length}/${bl.filter(r=>r[0]||r[2]).length}</b></div><h4>Spending by category</h4>`+(Object.entries(cat).filter(x=>x[1]).sort((a,b)=>b[1]-a[1]).map(([c,v])=>`<div class="ln"><span>${e(c)}</span><b>${money(v)}</b></div><div class="bar"><i style="width:${v/tot*100}%"></i></div>`).join('')||'<p class="mut">Add expenses to see your breakdown.</p>')},'div')),
+scrapbook:()=>card(`<h3>My little scrapbook <small>Photos & stickers</small></h3>
+<p class="mut">Save the little moments you want to remember. Photos stay on this device for now; cloud photo sync will be connected after Supabase setup.</p>
+<div class="scrap-actions"><label class="btn" for="mlpPhotoInput">＋ Add photos</label><input id="mlpPhotoInput" type="file" accept="image/*" multiple hidden><span class="mut">Choose from your gallery</span></div>
+<h4>Sticker collection</h4><div class="sticker-picker">${['🌸','🌷','🧸','🎀','💗','🤍','⭐','✨','☁️','🦋','🍓','🌼','🪻','🐻','☕','🌙','🧁','💐'].map(x=>`<button type="button" class="sticker-choice" data-sticker="${x}">${x}</button>`).join('')}</div>
+<h4>My memories</h4><div id="mlpScrapItems" class="scrap-grid"><p class="mut">Your photos and stickers will appear here.</p></div>`,'wide')};
 const R={
 F:w=>F_[w.n](w),
 L(w,k){const a=S[k]||(S[k]=(w.def||[]).map(t=>({t,d:0})));return card(`<h3>${w.t}</h3>`+cw(()=>prog(S[k]),'div','pr')+a.map((i,r)=>`<div class="it"><input type="checkbox" data-k="${k}" data-r="${r}" data-f="d" ${i.d?'checked':''}><input class="tx" data-k="${k}" data-r="${r}" data-f="t" value="${e(i.t)}"><button class="x" data-a="del" data-k="${k}" data-r="${r}" aria-label="Delete">×</button></div>`).join('')+`<div class="it add"><input class="addin" data-k="${k}" placeholder="${e(w.ph||'Add…')}"><button class="btn" data-a="add" data-k="${k}">Add</button></div>`)},
@@ -174,6 +204,131 @@ save();render()});
 if(S.theme)document.documentElement.dataset.theme=S.theme;
 addEventListener('hashchange',route);route();
 </script>
+
+<div class="mlp-floats noprint">
+  <div class="mlp-float mlp-player"><button id="mlpMusicToggle" aria-label="Play background music">♫ Play</button><span class="mut">Soft music</span><input id="mlpVolume" class="mlp-volume" type="range" min="0" max="100" value="22" aria-label="Music volume"></div>
+  <button class="mlp-float mlp-account" id="mlpAccountButton">♡ Account · Local mode</button>
+</div>
+<div class="mlp-login" id="mlpLogin">
+  <div class="mlp-login-card">
+    <h2>Your planner, everywhere</h2>
+    <p class="mut">Sign in to sync your Mom Life Planner across devices.</p>
+    <label>Email</label><input id="mlpEmail" type="email" autocomplete="email" placeholder="mama@example.com">
+    <label>Password</label><input id="mlpPassword" type="password" autocomplete="current-password" placeholder="At least 6 characters">
+    <button class="btn" id="mlpSignIn">Log in</button>
+    <button class="btn secondary" id="mlpSignUp">Create account</button>
+    <button class="btn secondary" id="mlpGoogle">Continue with Google</button>
+    <button class="x" id="mlpClose" style="float:right;margin-top:12px">Close ×</button>
+    <div class="mlp-login-status" id="mlpAuthStatus">Cloud login needs your Supabase project configuration.</div>
+  </div>
+</div>
+<script>
+/* Original, offline-friendly instrumental generated with Web Audio (no external music file). */
+(()=>{
+ let ctx=null, timer=null, playing=false, step=0, master=null;
+ const notes=[261.63,329.63,392.00,329.63,293.66,349.23,440.00,349.23,261.63,329.63,392.00,523.25,440.00,392.00,329.63,293.66];
+ const toggle=document.getElementById('mlpMusicToggle'),vol=document.getElementById('mlpVolume');
+ function tone(freq,when,duration,gain){
+   const o=ctx.createOscillator(),g=ctx.createGain();o.type='sine';o.frequency.value=freq;
+   g.gain.setValueAtTime(.0001,when);g.gain.exponentialRampToValueAtTime(Math.max(.0002,gain),when+.035);g.gain.exponentialRampToValueAtTime(.0001,when+duration);
+   o.connect(g);g.connect(master);o.start(when);o.stop(when+duration+.03);
+ }
+ function tick(){if(!playing||!ctx)return;const t=ctx.currentTime+.03,n=notes[step++%notes.length],v=(+vol.value||0)/100*.10;tone(n,t,1.15,v);if(step%4===0){tone(n/2,t,.95,v*.35);tone(n*1.5,t+.02,.7,v*.12)}}
+ function start(){const AC=window.AudioContext||window.webkitAudioContext;if(!AC){alert('Background music is not supported in this browser.');return}ctx=ctx||new AC();ctx.resume();master=master||ctx.createGain();master.gain.value=1;master.connect(ctx.destination);playing=true;tick();timer=setInterval(tick,780);toggle.textContent='Ⅱ Pause';toggle.setAttribute('aria-label','Pause background music')}
+ function stop(){playing=false;if(timer)clearInterval(timer);timer=null;toggle.textContent='♫ Play';toggle.setAttribute('aria-label','Play background music')}
+ toggle.addEventListener('click',()=>playing?stop():start());
+ vol.addEventListener('input',()=>{if(master)master.gain.value=(+vol.value)/100});
+})();
+
+/* Local scrapbook storage: photos are stored in IndexedDB, not localStorage. */
+const MLP_DB='mom-life-planner-media',MLP_STORE='photos';
+function mlpDb(){return new Promise((resolve,reject)=>{const req=indexedDB.open(MLP_DB,1);req.onupgradeneeded=()=>req.result.createObjectStore(MLP_STORE,{keyPath:'id',autoIncrement:true});req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error)})}
+async function mlpPhotoAdd(file){
+ const db=await mlpDb();
+ await new Promise((resolve,reject)=>{const tx=db.transaction(MLP_STORE,'readwrite');tx.objectStore(MLP_STORE).add({blob:file,name:file.name,created:Date.now()});tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error)});
+ if(mlpSupabase&&mlpUser){
+  const safeName=(file.name||'photo').replace(/[^a-zA-Z0-9._-]/g,'_'),path=mlpUser.id+'/'+Date.now()+'_'+safeName;
+  const {error:upErr}=await mlpSupabase.storage.from('planner-photos').upload(path,file,{upsert:false});
+  if(!upErr){const {error:metaErr}=await mlpSupabase.from('planner_photos').insert({user_id:mlpUser.id,file_path:path,file_name:file.name||'Photo'});if(metaErr)mlpStatus('Photo uploaded, but its cloud record failed: '+metaErr.message)}
+  else mlpStatus('Photo saved on this device. Cloud upload issue: '+upErr.message);
+ }
+}
+async function mlpPhotoAll(){const db=await mlpDb();return new Promise((resolve,reject)=>{const r=db.transaction(MLP_STORE).objectStore(MLP_STORE).getAll();r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)})}
+async function mlpPhotoDelete(id){const db=await mlpDb();return new Promise((resolve,reject)=>{const tx=db.transaction(MLP_STORE,'readwrite');tx.objectStore(MLP_STORE).delete(Number(id));tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error)})}
+async function mlpRenderScrapbook(){
+ const host=document.getElementById('mlpScrapItems');if(!host)return;
+ const items=await mlpPhotoAll();const stickers=JSON.parse(localStorage.getItem('mlp1')||'{}').mlpStickers||[];
+ host.innerHTML='';
+ items.forEach(item=>{const url=URL.createObjectURL(item.blob),tile=document.createElement('div');tile.className='scrap-tile';tile.innerHTML=`<img alt=""> <button aria-label="Delete photo">×</button>`;tile.querySelector('img').src=url;tile.querySelector('button').onclick=async()=>{await mlpPhotoDelete(item.id);mlpRenderScrapbook()};host.append(tile)});
+ if(mlpSupabase&&mlpUser){
+  const {data:remote,error}=await mlpSupabase.from('planner_photos').select('id,file_path,file_name').eq('user_id',mlpUser.id).order('created_at',{ascending:false});
+  if(!error)for(const item of (remote||[])){
+   const {data:signed}=await mlpSupabase.storage.from('planner-photos').createSignedUrl(item.file_path,3600);
+   if(signed?.signedUrl){const tile=document.createElement('div');tile.className='scrap-tile';tile.innerHTML=`<img alt=""><button aria-label="Delete cloud photo">×</button>`;tile.querySelector('img').src=signed.signedUrl;tile.querySelector('button').onclick=async()=>{await mlpSupabase.storage.from('planner-photos').remove([item.file_path]);await mlpSupabase.from('planner_photos').delete().eq('id',item.id);mlpRenderScrapbook()};host.append(tile)}
+  }
+ }
+ stickers.forEach((st,i)=>{const tile=document.createElement('div');tile.className='scrap-tile';tile.innerHTML=`<span class="scrap-emoji">${st}</span><button aria-label="Delete sticker">×</button>`;tile.querySelector('button').onclick=()=>{const data=JSON.parse(localStorage.getItem('mlp1')||'{}');data.mlpStickers=(data.mlpStickers||[]).filter((_,n)=>n!==i);localStorage.setItem('mlp1',JSON.stringify(data));if(typeof S!=='undefined')S.mlpStickers=data.mlpStickers;mlpRenderScrapbook()};host.append(tile)});
+ if(!items.length&&!stickers.length&&host.children.length===0)host.innerHTML='<p class="mut">No memories yet. Add a photo or choose a sticker above.</p>';
+}
+document.addEventListener('change',async ev=>{if(ev.target.id==='mlpPhotoInput'){for(const f of [...ev.target.files])if(f.type.startsWith('image/'))await mlpPhotoAdd(f);ev.target.value='';mlpRenderScrapbook()}});
+document.addEventListener('click',ev=>{const b=ev.target.closest('[data-sticker]');if(!b)return;S.mlpStickers=S.mlpStickers||[];S.mlpStickers.push(b.dataset.sticker);save();mlpRenderScrapbook()});
+const mlpOrigRender=window.render;
+if(typeof mlpOrigRender==='function'){window.render=function(){mlpOrigRender();mlpRenderScrapbook()}}
+document.addEventListener('DOMContentLoaded',mlpRenderScrapbook);
+
+/* Supabase account + cross-device planner sync.
+   Add your project URL and anon/publishable key below after creating a Supabase project.
+   Required table: planner_data (user_id uuid primary key references auth.users, data jsonb, updated_at timestamptz).
+*/
+const MLP_SUPABASE_URL='https://rrbfbdulhwjbzjvbsjke.supabase.co';
+const MLP_SUPABASE_ANON_KEY='sb_publishable_t7mh6UQKi5sEHXbolO6p6g_oJOxbmdk';
+let mlpSupabase=null,mlpUser=null,mlpSyncTimer=null;
+const mlpStatus=(msg)=>{const el=document.getElementById('mlpAuthStatus');if(el)el.textContent=msg};
+const mlpCloudReady=()=>MLP_SUPABASE_URL.startsWith('https://')&&!MLP_SUPABASE_URL.includes('YOUR_')&&MLP_SUPABASE_ANON_KEY&&!MLP_SUPABASE_ANON_KEY.includes('YOUR_');
+function mlpSetAccountLabel(){const b=document.getElementById('mlpAccountButton');if(b)b.textContent=mlpUser?'♡ '+(mlpUser.email||'Signed in')+' · Log out':'♡ Account · '+(mlpCloudReady()?'Sign in':'Setup needed')}
+async function mlpLoadCloud(){
+ if(!mlpSupabase||!mlpUser)return;
+ const {data,error}=await mlpSupabase.from('planner_data').select('data').eq('user_id',mlpUser.id).maybeSingle();
+ if(error){mlpStatus('Cloud read error: '+error.message);return}
+ if(data&&data.data){
+   const local=JSON.parse(localStorage.getItem('mlp1')||'{}');
+   const merged={...data.data,...local}; // preserve this device's existing entries on first connection
+   S=merged;localStorage.setItem('mlp1',JSON.stringify(S));
+   await mlpSupabase.from('planner_data').upsert({user_id:mlpUser.id,data:S,updated_at:new Date().toISOString()},{onConflict:'user_id'});
+   if(typeof render==='function')render();
+   mlpStatus('Signed in. Your planner is syncing.');
+ }else{
+   const {error:upErr}=await mlpSupabase.from('planner_data').upsert({user_id:mlpUser.id,data:S,updated_at:new Date().toISOString()},{onConflict:'user_id'});
+   mlpStatus(upErr?'Cloud save error: '+upErr.message:'Your existing planner has been copied to your account.');
+ }
+}
+window.__mlpCloudSave=(state)=>{
+ if(!mlpSupabase||!mlpUser)return;
+ clearTimeout(mlpSyncTimer);
+ mlpSyncTimer=setTimeout(async()=>{const {error}=await mlpSupabase.from('planner_data').upsert({user_id:mlpUser.id,data:state,updated_at:new Date().toISOString()},{onConflict:'user_id'});if(error)mlpStatus('Sync issue: '+error.message)},900);
+};
+async function mlpInitAuth(){
+ if(!mlpCloudReady()){mlpSetAccountLabel();mlpStatus('To activate accounts, add your Supabase URL and anon/publishable key in the code.');return}
+ try{
+  const lib=await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm');
+  mlpSupabase=lib.createClient(MLP_SUPABASE_URL,MLP_SUPABASE_ANON_KEY);
+  const {data}=await mlpSupabase.auth.getSession();mlpUser=data.session?.user||null;
+  mlpSetAccountLabel();if(mlpUser)await mlpLoadCloud();
+  mlpSupabase.auth.onAuthStateChange(async(_event,session)=>{mlpUser=session?.user||null;mlpSetAccountLabel();if(mlpUser)await mlpLoadCloud()});
+ }catch(err){mlpStatus('Could not connect to Supabase: '+err.message)}
+}
+document.getElementById('mlpAccountButton').addEventListener('click',async()=>{
+ if(mlpUser&&mlpSupabase){if(confirm('Log out of your Mom Life Planner account?'))await mlpSupabase.auth.signOut();return}
+ document.getElementById('mlpLogin').classList.add('open');
+ if(!mlpCloudReady())mlpStatus('Supabase setup is still needed before login can work.');
+});
+document.getElementById('mlpClose').onclick=()=>document.getElementById('mlpLogin').classList.remove('open');
+document.getElementById('mlpSignIn').onclick=async()=>{if(!mlpSupabase)return mlpStatus('Please finish Supabase setup first.');const email=document.getElementById('mlpEmail').value,password=document.getElementById('mlpPassword').value;const {error}=await mlpSupabase.auth.signInWithPassword({email,password});mlpStatus(error?error.message:'Signing in…')};
+document.getElementById('mlpSignUp').onclick=async()=>{if(!mlpSupabase)return mlpStatus('Please finish Supabase setup first.');const email=document.getElementById('mlpEmail').value,password=document.getElementById('mlpPassword').value;if(password.length<6)return mlpStatus('Password must be at least 6 characters.');const {error}=await mlpSupabase.auth.signUp({email,password});mlpStatus(error?error.message:'Check your email to confirm your account.')};
+document.getElementById('mlpGoogle').onclick=async()=>{if(!mlpSupabase)return mlpStatus('Please finish Supabase setup first.');const {error}=await mlpSupabase.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.origin+location.pathname}});if(error)mlpStatus(error.message)};
+mlpInitAuth();
+</script>
+
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {

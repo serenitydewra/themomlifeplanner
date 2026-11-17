@@ -78,9 +78,13 @@ a{color:var(--pink2)}
 /* Mom Life Planner additions */
 .mlp-floats{position:fixed;right:14px;bottom:88px;z-index:20;display:flex;flex-direction:column;gap:9px;align-items:flex-end}
 .mlp-float{border:1px solid var(--line);background:var(--card);color:var(--ink);box-shadow:var(--sh);border-radius:18px;padding:9px 13px;font:700 13px Nunito,sans-serif}
-.mlp-player{display:flex;align-items:center;gap:8px}
+.mlp-player{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .mlp-player button,.mlp-account{cursor:pointer}
 .mlp-volume{width:74px!important;accent-color:var(--pink2)}
+.mlp-music-panel{display:none;max-width:min(320px,calc(100vw - 28px));padding:13px;background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:var(--sh)}
+.mlp-music-panel.open{display:block}.mlp-music-panel select{width:100%;margin:5px 0 8px}
+.mlp-music-row{display:flex;align-items:center;gap:8px}
+.journal-decor{grid-column:1/-1}
 .mlp-login{position:fixed;inset:0;z-index:50;background:rgba(35,25,22,.48);display:none;align-items:center;justify-content:center;padding:18px}
 .mlp-login.open{display:flex}
 .mlp-login-card{width:min(100%,410px);background:var(--card);border:1px solid var(--line);border-radius:24px;padding:22px;box-shadow:0 18px 60px rgba(0,0,0,.2)}
@@ -90,14 +94,63 @@ a{color:var(--pink2)}
 .mlp-login-card .secondary{background:var(--sl);color:var(--ink)}
 .mlp-login-status{font-size:12px;color:var(--mut);min-height:18px;margin-top:8px}
 .scrap-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-.sticker-picker{display:flex;flex-wrap:wrap;gap:8px}
-.sticker-choice{width:44px;height:44px;border:1px solid var(--line);background:var(--bg);border-radius:14px;font-size:23px;cursor:pointer}
 .scrap-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:10px;margin-top:12px}
 .scrap-tile{position:relative;min-height:110px;border:1px solid var(--line);border-radius:16px;background:var(--bg);display:flex;align-items:center;justify-content:center;overflow:hidden}
 .scrap-tile img{width:100%;height:145px;object-fit:cover}
 .scrap-tile .scrap-emoji{font-size:48px}
 .scrap-tile button{position:absolute;top:4px;right:5px;background:rgba(255,255,255,.88);color:#6b4c43;border:0;border-radius:50%;width:26px;height:26px}
 @media(max-width:860px){.mlp-floats{bottom:82px;right:9px}.mlp-player{gap:5px}.mlp-volume{width:58px!important}}
+
+.scrapbook-note{width:100%;min-height:112px;margin:12px 0 16px;padding:14px 16px;border:1px solid var(--line);border-radius:16px;background:#fffaf5;color:var(--ink);font:16px/1.65 'Nunito',sans-serif;resize:vertical}
+
+/* Stickers · Journal · Scrapbook board */
+.mlp-tabs,.mlp-pages{display:flex;gap:6px;overflow-x:auto;padding:2px 0 8px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.mlp-tabs::-webkit-scrollbar,.mlp-pages::-webkit-scrollbar{display:none}
+.mlp-tab{flex:none;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:99px;padding:5px 12px;font:700 12px Nunito,sans-serif;cursor:pointer}
+.mlp-tab.on{background:var(--pl);color:var(--pink2);border-color:var(--pink)}
+.mlp-tray{display:grid;grid-template-columns:repeat(auto-fill,44px);gap:6px;justify-content:start;padding:2px 0}
+.mlp-tile{width:44px;height:44px;padding:5px;border:1px solid var(--line);border-radius:13px;background:var(--bg);display:grid;place-items:center;cursor:grab;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}
+.mlp-tile:hover{background:var(--pl)}
+.mlp-tile svg{width:100%;height:100%;pointer-events:none}
+.mlp-help{font-size:12px;color:var(--mut);margin:8px 0}
+.mlp-actions{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 8px}
+.mlp-mini{margin:0;padding:6px 14px;font-size:13px;background:var(--sage)}
+.mlp-canvas{--u:1px;position:relative;width:100%;max-width:520px;margin:6px auto 0;aspect-ratio:5/4;border:1px dashed var(--pink);border-radius:20px;background:linear-gradient(135deg,#fffdf9,#fbf2ed);overflow:hidden;touch-action:pan-y;-webkit-user-select:none;user-select:none}
+.mlp-canvas[data-kind=scrap]{aspect-ratio:1/1;max-width:480px;border-color:#d8bdb5}
+.mlp-canvas:before{content:attr(data-ph);position:absolute;top:12px;left:14px;color:#c6a9a0;font:italic 17px 'Cormorant Garamond',serif;pointer-events:none}
+.mlp-canvas.over{outline:2px solid var(--pink2);outline-offset:-2px}
+.mlp-item{position:absolute;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;cursor:grab}
+.mlp-item.sel{outline:1.5px dashed var(--pink2);outline-offset:3px;border-radius:6px}
+.mlp-body svg{display:block;width:100%;aspect-ratio:1;filter:drop-shadow(0 3px 3px rgba(100,70,60,.14));pointer-events:none}
+.mlp-text .mlp-body{white-space:pre;width:max-content;font:700 1em/1.15 'Cormorant Garamond',Georgia,serif;padding:2px 4px}
+.mlp-photo .mlp-body{background:#fff;padding:calc(var(--u) * 5);padding-bottom:calc(var(--u) * 14);box-shadow:0 2px 9px #0003;border-radius:3px}
+.mlp-photo img{display:block;width:100%;object-fit:cover;pointer-events:none;background:#f3e6e0}
+.mlp-photo .mlp-body.missing img{display:none}
+.mlp-photo .mlp-body.missing:before{content:'📷';display:grid;place-items:center;aspect-ratio:1;background:#f3e6e0;font-size:22px}
+.mlp-handle{display:none;position:absolute;right:-12px;bottom:-12px;width:28px;height:28px;border-radius:50%;background:var(--pink2);border:2px solid #fff;box-shadow:0 1px 5px #0003;touch-action:none;cursor:nwse-resize;place-items:center;color:#fff;font-style:normal;font-size:14px;line-height:1}
+.mlp-handle:after{content:'⤡'}
+.mlp-item.sel .mlp-handle{display:grid}
+.mlp-ghost{position:fixed;left:0;top:0;width:60px;height:60px;pointer-events:none;z-index:99999;opacity:.92;filter:drop-shadow(0 6px 10px #0004)}
+.mlp-ghost svg{width:100%;height:100%;display:block}
+.mlp-selbar{margin-top:10px;min-height:42px}
+.mlp-selrow{display:flex;gap:6px;flex-wrap:wrap}
+.mlp-ib{width:40px;height:38px;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);font-size:17px;cursor:pointer;display:grid;place-items:center;padding:0}
+.mlp-ib.del{color:#c0605f}
+.mlp-seltext{margin-top:8px;min-height:0;padding:8px 10px;font-size:15px}
+.mlp-colors{display:flex;gap:8px;margin-top:8px}
+.mlp-sw{width:26px;height:26px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px var(--line);padding:0;cursor:pointer}
+.mlp-sw.on{box-shadow:0 0 0 2px var(--pink2)}
+.mlp-chip{flex:none;text-align:left;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:14px;padding:6px 12px;cursor:pointer;font:700 13px Nunito,sans-serif;display:flex;flex-direction:column;max-width:150px}
+.mlp-chip b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mlp-chip small{color:var(--mut);font-weight:600}
+.mlp-chip.on{background:var(--pl);border-color:var(--pink)}
+.mlp-chip.new{justify-content:center;color:var(--pink2);border-style:dashed}
+.mlp-delpage{font:700 12px Nunito,sans-serif;padding:0;margin:0 0 8px}
+.mlp-title{font:700 22px 'Cormorant Garamond',Georgia,serif;margin:4px 0 6px}
+.mlp-lib summary{cursor:pointer;font-weight:700;color:var(--pink2);margin:10px 0}
+.scrap-tile .mlp-libpick{position:static;display:block;width:100%;height:100%;padding:0;border:0;border-radius:0;background:none;cursor:pointer}
+.mlp-libpick img{width:100%;height:112px;object-fit:cover;display:block}
+@media print{.mlp-handle{display:none!important}.mlp-canvas:before{display:none}}
 </style>
 <link rel="manifest" href="./manifest.json">
 <meta name="theme-color" content="#fbf6ee">
@@ -133,7 +186,7 @@ const G=(id,t,s,rows,cols,ph)=>({y:'G',id,t,s,rows,cols,ph}),X=(id,t,s,rows)=>({
 const C=(id,t)=>({y:'C',id,t,s:''}),F=n=>({y:'F',n});
 const SEC=[
 ['dash','Dashboard','🏡',0,'Your day at a glance',[F('hero'),F('stats'),L('top3','Today’s priorities','d','What matters most today…'),L('todo','To-do list','d','Add a task…'),F('ov'),L('rem','Important reminders','','Add a reminder…'),F('week')]],
-['daily','Daily','☀️','d','Plan today, one gentle step at a time',[{y:'Z',id:'sched',t:'Daily schedule',s:'d'},L('top3','Top 3 priorities','d','A priority…'),L('todo','Daily to-do list','d','Add a task…'),G('meal','Meal plan','d',MEALS,['Menu'],'What’s on the menu?'),L('kids','Kids’ activities','d','Practice, playdate, lessons…'),L('chores','Household chores','d','Add a chore…',['Dishes','Tidy living room']),L('sc','Self-care reminder','d','Add a reminder…',SCDEF),N('notes','Notes','d','Thoughts, ideas, things to remember…')]],
+['daily','Daily','☀️','d','Plan today, one gentle step at a time',[{y:'Z',id:'sched',t:'Daily schedule',s:'d'},L('top3','Top 3 priorities','d','A priority…'),L('todo','Daily to-do list','d','Add a task…'),G('meal','Meal plan','d',MEALS,['Menu'],'What’s on the menu?'),L('kids','Kids’ activities','d','Practice, playdate, lessons…'),L('chores','Household chores','d','Add a chore…',['Dishes','Tidy living room']),L('sc','Self-care reminder','d','Add a reminder…',SCDEF),N('notes','Notes','d','Thoughts, ideas, things to remember…'),F('journalCanvas')]],
 ['weekly','Weekly','🗓️','w','See the week ahead and stay a step ahead',[G('wov','Week at a glance','w',FD,['Plan'],'Plans for the day…'),L('wgoals','Weekly goals','w','A goal for this week…'),L('wfam','Family activities','w','Movie night, park day…'),T('wappt','Appointments','w',['Day','Time','What','Who']),L('groc','Grocery shopping list','w','Add an item…'),G('wmeal','Weekly meal planner','w',FD,MEALS),G('wclean','Weekly cleaning schedule','w',FD,['Focus'],'Bathrooms, floors…')]],
 ['monthly','Monthly','📅','m','The big picture for your month',[C('mcal','Monthly calendar'),L('mgoals','Monthly goals','m','A goal for this month…'),T('mdates','Important dates','m',['Date:d','What']),T('bday','Family birthdays','',['Name','Date:d','Notes']),T('sch','School events','m',['Date:d','Event','Notes']),T('bills','Bills & payments','m',['Bill','Due:d','Amount:n','Paid:c'],2),N('mrefl','Monthly reflection','m','What went well? What was hard? What do I want for next month?')]],
 ['family','Family','👨‍👩‍👧','m','Everything about your little ones in one place',[T('kidinfo','Children’s information','',['Name','Birthday:d','Grade / class','School','Allergies / notes']),T('schsch','School schedules','',['Child','Day','Time','Class / pickup']),T('schact','School activities','',['Child','Activity','Day / time','Notes']),T('med','Medical appointments','',['Date:d','Who','Doctor / clinic','Notes','Done:c']),T('vacc','Vaccination records','',['Child','Vaccine','Date given:d','Next due:d','Done:c']),T('contacts','Important contacts','',['Name','Role','Phone','Notes']),C('famcal','Family events calendar')]],
@@ -141,11 +194,129 @@ const SEC=[
 ['home','Home','🧺','d','A calmer, cleaner home, one checklist at a time',[L('clean','Daily cleaning checklist','d','Add a task…',['Make beds','Wash dishes','Wipe kitchen counters','Sweep floors','Tidy living room','Take out trash']),G('wclean','Weekly cleaning routine','w',FD,['Focus'],'Bathrooms, floors…'),L('deep','Monthly deep cleaning','m','Add a task…',['Clean oven & microwave','Wash windows','Declutter closets','Deep clean bathrooms','Wash curtains']),X('laundry','Laundry tracker','w',['Whites','Colors','Bedding','Towels','Kids’ clothes']),T('maint','Home maintenance','',['Task','How often','Last done:d','Next due:d','Done:c']),T('hinv','Household inventory','',['Item','Qty','Location','Need to buy:c'])]],
 ['finance','Finance','💰','m','Know where your money goes',[F('fin'),T('budget','Monthly household budget','m',['Category:k','Planned:n','Actual:a','Left:l'],1,['Groceries','Kids','Home','Transport','Health','Fun']),T('inc','Income tracker','m',['Date:d','Source','Amount:n'],2),T('exp','Expenses tracker','m',['Date:d','What','Category:k','Amount:n'],3),T('bills','Bills tracker','m',['Bill','Due:d','Amount:n','Paid:c'],2),T('sav','Savings goals','',['Goal','Target:n','Saved:n','Progress:p']),F('finov')]],
 ['selfcare','Self-care','🌸','d','You matter too, mama',[L('sc','Daily self-care checklist','d','Add something kind for me…',SCDEF),{y:'D',id:'water',t:'Water intake',s:'d',n:8},W('sleep','Sleep tracker','w','num','hrs'),W('mood','Mood tracker','w','mood'),W('ex','Exercise tracker','w','num','min'),L('grat','Gratitude journal','d','I’m grateful for…'),L('pgoals','Personal goals','','A goal for me…'),T('metime','Me-time planner','w',['Day','Time','Activity','Done:c'])]],
-['journal','Journal','📖','d','Capture the little moments',[N('jr','Daily journal','d','Dear diary…'),L('grat','Things I’m grateful for','d','I’m grateful for…'),T('mem','My motherhood memories','',['Date:d','Memory:x']),T('kidm','Kids’ memorable moments','',['Date:d','Child','Moment:x']),N('mrefl','Monthly reflection','m','What went well? What was hard? What do I want for next month?'),N('growth','Personal growth','m','What am I learning? How am I growing?')]]];
+['journal','Journal','📖','d','Capture the little moments',[N('jr','Daily journal','d','Dear diary…'),F('journalCanvas'),L('grat','Things I’m grateful for','d','I’m grateful for…'),T('mem','My motherhood memories','',['Date:d','Memory:x']),T('kidm','Kids’ memorable moments','',['Date:d','Child','Moment:x']),N('mrefl','Monthly reflection','m','What went well? What was hard? What do I want for next month?'),N('growth','Personal growth','m','What am I learning? How am I growing?')]]];
 SEC.push(['scrapbook','Scrapbook','🧸','', 'Keep your favourite little memories in one place',[F('scrapbook')]]);
 const K=w=>w.id+(w.s?'@'+sc(w.s):'');
 const lab=n=>n=='d'?cur.toLocaleDateString(undefined,{weekday:'long',day:'numeric',month:'long',year:'numeric'}):n=='w'?'Week of '+mon(cur).toLocaleDateString(undefined,{day:'numeric',month:'short'}):cur.toLocaleDateString(undefined,{month:'long',year:'numeric'});
 const hr=i=>(i%12||12)+(i<12?' AM':' PM');
+
+const MLP_STICKERS={
+ flower:{label:'Flower',svg:`<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><g stroke="#c88791" stroke-width="2"><ellipse cx="50" cy="25" rx="13" ry="21" fill="#f8cbd1"/><ellipse cx="50" cy="75" rx="13" ry="21" fill="#f8cbd1"/><ellipse cx="25" cy="50" rx="21" ry="13" fill="#f8cbd1"/><ellipse cx="75" cy="50" rx="21" ry="13" fill="#f8cbd1"/></g><circle cx="50" cy="50" r="13" fill="#f6d98c" stroke="#d5a85e" stroke-width="2"/><path d="M50 85q-5 9-1 13m1-7q-15-8-20 2" fill="none" stroke="#8fa586" stroke-width="3" stroke-linecap="round"/></svg>`},
+ bow:{label:'Bow',svg:`<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M48 48Q15 10 10 30Q5 58 46 55L32 88Q47 95 52 57Q63 96 78 86L56 54Q98 59 91 29Q84 10 53 48Z" fill="#efb8c0" stroke="#c98591" stroke-width="3" stroke-linejoin="round"/><circle cx="50" cy="51" r="9" fill="#f8d9dc" stroke="#c98591" stroke-width="2"/></svg>`},
+ heart:{label:'Heart',svg:`<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M50 84C38 72 13 54 13 34 13 12 42 8 50 31 60 8 88 12 88 34 88 54 63 73 50 84Z" fill="#efb8c0" stroke="#c98591" stroke-width="3"/><path d="M27 33q3-10 13-8" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"/></svg>`},
+ star:{label:'Star',svg:`<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="m50 8 11 28 30 2-23 20 8 30-26-17-26 17 8-30L9 38l30-2Z" fill="#f7dc91" stroke="#d2ae60" stroke-width="3" stroke-linejoin="round"/><path d="m50 25 4 13" stroke="#fff" stroke-width="4" stroke-linecap="round"/></svg>`},
+ coffee:{label:'Coffee',svg:`<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M22 35h48v39q-24 18-48 0Z" fill="#d9b9a0" stroke="#9b7561" stroke-width="3"/><path d="M70 43h9q16 0 8 17-5 9-17 7" fill="none" stroke="#9b7561" stroke-width="5"/><path d="M38 27q-8-10 0-18m15 18q-8-10 0-18" fill="none" stroke="#c7a69a" stroke-width="3" stroke-linecap="round"/><path d="M17 82h65" stroke="#9b7561" stroke-width="4" stroke-linecap="round"/></svg>`},
+ book:{label:'Book',svg:`<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M13 24q20-8 37 5v58Q31 73 13 82Z" fill="#e8b8b6" stroke="#b97f80" stroke-width="3"/><path d="M87 24q-20-8-37 5v58q19-14 37-5Z" fill="#f5d8c7" stroke="#c69b83" stroke-width="3"/><path d="M50 29v58M25 38q10-2 17 3m-17 9q10-2 17 3m33-15q-10-2-17 3m17 9q-10-2-17 3" fill="none" stroke="#fffaf5" stroke-width="3" stroke-linecap="round"/></svg>`},
+ bear:{label:'Teddy',svg:`<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="27" cy="25" r="15" fill="#c99c7c" stroke="#986f57" stroke-width="3"/><circle cx="73" cy="25" r="15" fill="#c99c7c" stroke="#986f57" stroke-width="3"/><circle cx="50" cy="51" r="35" fill="#d9b18e" stroke="#986f57" stroke-width="3"/><ellipse cx="50" cy="62" rx="18" ry="13" fill="#f2dfc9"/><circle cx="38" cy="47" r="3" fill="#5d4940"/><circle cx="62" cy="47" r="3" fill="#5d4940"/><path d="M46 59q4 5 8 0" fill="none" stroke="#8b6252" stroke-width="3" stroke-linecap="round"/><path d="M50 13l6 8-6 7-6-7Z" fill="#e9aeb7"/></svg>`},
+ rainbow:{label:'Rainbow',svg:`<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M15 72a35 35 0 0 1 70 0" fill="none" stroke="#e9a2a8" stroke-width="11"/><path d="M25 72a25 25 0 0 1 50 0" fill="none" stroke="#f2cf91" stroke-width="10"/><path d="M35 72a15 15 0 0 1 30 0" fill="none" stroke="#a9b99e" stroke-width="9"/><path d="M8 72q7-14 16 0m52 0q8-14 16 0" fill="#fff" stroke="#d8c9c2" stroke-width="2"/></svg>`}
+};
+/* Extra GoodNotes-style mini sticker illustrations */
+Object.assign(MLP_STICKERS,{
+ moon:{label:'Moon',svg:`<svg viewBox="0 0 100 100"><path d="M67 12A38 38 0 1 0 88 70 34 34 0 0 1 67 12Z" fill="#f6d98c" stroke="#d5ad61" stroke-width="3"/><path d="m23 20 3 8 8 3-8 3-3 8-3-8-8-3 8-3Z" fill="#e9c2c7"/></svg>`},
+ cloud:{label:'Cloud',svg:`<svg viewBox="0 0 100 100"><path d="M20 70a17 17 0 0 1 2-34 27 27 0 0 1 51-2 19 19 0 0 1 7 36Z" fill="#dce7ed" stroke="#9db4c2" stroke-width="3"/><path d="M30 53q10-8 20 0" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"/></svg>`},
+ sun:{label:'Sunshine',svg:`<svg viewBox="0 0 100 100"><g stroke="#d9ad57" stroke-width="4" stroke-linecap="round"><path d="M50 7v12M50 81v12M7 50h12M81 50h12M20 20l9 9m42 42 9 9M80 20l-9 9M29 71l-9 9"/></g><circle cx="50" cy="50" r="25" fill="#f8d77e" stroke="#d9ad57" stroke-width="3"/><path d="M39 48q4-4 8 0m8 0q4-4 8 0m-23 12q10 10 20 0" fill="none" stroke="#a97959" stroke-width="2.5" stroke-linecap="round"/></svg>`},
+ tulip:{label:'Tulip',svg:`<svg viewBox="0 0 100 100"><path d="M50 43v48" stroke="#83a17c" stroke-width="5" stroke-linecap="round"/><path d="M50 69q-20-18-28 0 18 15 28 0m0 8q18-20 29-5-12 17-29 5" fill="#a9c69b" stroke="#789873" stroke-width="2"/><path d="M26 20q0 32 24 32 24 0 24-32-12 5-24-9-12 14-24 9Z" fill="#efb8c0" stroke="#c98591" stroke-width="3"/></svg>`},
+ strawberry:{label:'Strawberry',svg:`<svg viewBox="0 0 100 100"><path d="M50 31q-32-22-38 7-5 30 38 53 43-23 38-53-6-29-38-7Z" fill="#ed9c9e" stroke="#c8797d" stroke-width="3"/><path d="M50 32q-5-22-20-18 4 15 20 18 5-20 20-18-2 15-20 18Z" fill="#91aa7d" stroke="#718c68" stroke-width="3"/><g fill="#ffe6a5"><circle cx="31" cy="46" r="2"/><circle cx="51" cy="50" r="2"/><circle cx="68" cy="44" r="2"/><circle cx="42" cy="68" r="2"/><circle cx="60" cy="70" r="2"/></g></svg>`},
+ cupcake:{label:'Cupcake',svg:`<svg viewBox="0 0 100 100"><path d="M24 48q-2-22 20-22 8-21 25-6 19 1 13 28Z" fill="#f4c7d0" stroke="#c98591" stroke-width="3"/><path d="m27 49 7 39h33l7-39Z" fill="#e8b77e" stroke="#b98b61" stroke-width="3"/><path d="M39 60h25M41 72h21" stroke="#fff0d8" stroke-width="3"/><circle cx="52" cy="22" r="7" fill="#d77f89"/></svg>`},
+ camera:{label:'Camera',svg:`<svg viewBox="0 0 100 100"><rect x="12" y="30" width="76" height="52" rx="12" fill="#c5d6df" stroke="#8ba7b5" stroke-width="3"/><path d="m29 30 8-12h25l8 12" fill="#e8c4c7" stroke="#b98691" stroke-width="3"/><circle cx="51" cy="56" r="19" fill="#fff5e9" stroke="#8ba7b5" stroke-width="4"/><circle cx="51" cy="56" r="11" fill="#a9c2ce"/></svg>`},
+ envelope:{label:'Love note',svg:`<svg viewBox="0 0 100 100"><rect x="12" y="24" width="76" height="54" rx="8" fill="#fff0e8" stroke="#c99b91" stroke-width="3"/><path d="m14 30 36 28 36-28" fill="none" stroke="#c99b91" stroke-width="3"/><path d="M50 77 35 62q-9-10 0-17 8-5 15 4 7-9 15-4 9 7 0 17Z" fill="#e9aeb7"/></svg>`},
+ leaf:{label:'Leaf',svg:`<svg viewBox="0 0 100 100"><path d="M16 79Q13 18 83 14 84 76 16 79Z" fill="#b9cba9" stroke="#809b76" stroke-width="3"/><path d="M18 81 73 26M39 61l-3-21m19 2 1 17" fill="none" stroke="#809b76" stroke-width="3" stroke-linecap="round"/></svg>`},
+ butterfly:{label:'Butterfly',svg:`<svg viewBox="0 0 100 100"><path d="M48 48Q15 5 10 36 7 60 45 56 12 77 28 89 43 91 50 59 58 91 74 89 90 77 55 56 93 60 90 36 85 5 52 48Z" fill="#d7c4e8" stroke="#a38ab9" stroke-width="3"/><path d="M50 35q-8 24 0 39" stroke="#8c719f" stroke-width="5" stroke-linecap="round"/></svg>`},
+ pencil:{label:'Pencil',svg:`<svg viewBox="0 0 100 100"><path d="m25 76 8-19 39-39 14 14-39 39Z" fill="#f3d17d" stroke="#bd9857" stroke-width="3"/><path d="m25 76 17-5-12-12Z" fill="#d9b49b" stroke="#a98a75" stroke-width="2"/><path d="m72 18 14 14" stroke="#fff0d5" stroke-width="3"/></svg>`},
+ cake:{label:'Cake',svg:`<svg viewBox="0 0 100 100"><path d="M16 48h68v39H16Z" fill="#f3c7ce" stroke="#c98c97" stroke-width="3"/><path d="M16 48q12-15 24 0 12-15 24 0 10-15 20 0" fill="#fff1df" stroke="#c98c97" stroke-width="3"/><path d="M50 17v22" stroke="#d5ad61" stroke-width="4"/><path d="M45 18q5-13 10 0-5 8-10 0" fill="#f4cf75"/></svg>`},
+ paw:{label:'Paw print',svg:`<svg viewBox="0 0 100 100"><g fill="#c99c7f" stroke="#9c745d" stroke-width="3"><ellipse cx="50" cy="65" rx="25" ry="20"/><ellipse cx="22" cy="39" rx="10" ry="14" transform="rotate(-25 22 39)"/><ellipse cx="43" cy="25" rx="10" ry="14"/><ellipse cx="65" cy="27" rx="10" ry="14"/><ellipse cx="81" cy="43" rx="10" ry="14" transform="rotate(25 81 43)"/></g></svg>`},
+ gift:{label:'Gift',svg:`<svg viewBox="0 0 100 100"><rect x="15" y="39" width="70" height="48" rx="5" fill="#e9b8c0" stroke="#c98591" stroke-width="3"/><path d="M50 39v48M15 54h70" stroke="#fff0df" stroke-width="7"/><path d="M50 39Q14 34 25 16 40 7 50 39 60 7 76 16 87 34 50 39Z" fill="#f1c96f" stroke="#c59d4c" stroke-width="3"/></svg>`},
+ sparkle:{label:'Sparkles',svg:`<svg viewBox="0 0 100 100"><path d="M50 8 59 39 90 50 59 61 50 92 41 61 10 50 41 39Z" fill="#f5d77c" stroke="#d2ad5c" stroke-width="3"/><path d="m80 8 4 12 12 4-12 4-4 12-4-12-12-4 12-4Z" fill="#e8b8c2"/></svg>`},
+ flower2:{label:'Daisy',svg:`<svg viewBox="0 0 100 100"><g fill="#fff4dc" stroke="#d9c5a1" stroke-width="2"><ellipse cx="50" cy="23" rx="12" ry="19"/><ellipse cx="50" cy="77" rx="12" ry="19"/><ellipse cx="23" cy="50" rx="19" ry="12"/><ellipse cx="77" cy="50" rx="19" ry="12"/><ellipse cx="31" cy="31" rx="12" ry="18" transform="rotate(-45 31 31)"/><ellipse cx="69" cy="31" rx="12" ry="18" transform="rotate(45 69 31)"/></g><circle cx="50" cy="50" r="13" fill="#f3cf76" stroke="#d2a954" stroke-width="2"/></svg>`},
+ milk:{label:'Milk carton',svg:`<svg viewBox="0 0 100 100"><path d="M30 24 43 12h25l8 14v62H30Z" fill="#e4edf1" stroke="#9cb5c1" stroke-width="3"/><path d="M43 12v18h33M30 46h46" fill="none" stroke="#9cb5c1" stroke-width="3"/><path d="M42 58q9-15 18 0-9 12-18 0Z" fill="#e6aab5"/></svg>`},
+ heart2:{label:'Tiny hearts',svg:`<svg viewBox="0 0 100 100"><path d="M30 75C20 65 8 54 8 40 8 24 28 20 36 37 44 20 64 24 64 40 64 54 44 68 36 75Z" fill="#efb8c0" stroke="#c98591" stroke-width="3"/><path d="M66 40C60 34 55 28 55 20 55 10 69 8 74 19 79 8 93 10 93 20 93 28 80 38 74 43Z" fill="#f5d77c" stroke="#d2ad5c" stroke-width="2"/></svg>`}
+});
+
+/* ===== 24 extra GoodNotes-style stickers (total 50) ===== */
+const MLP_TAPE='M8 34h84l-4 4 4 4-4 4 4 4-4 4 4 4-4 4 4 4H8l4-4-4-4 4-4-4-4 4-4-4-4 4-4-4-4Z';
+const MLP_FOOT=`<ellipse cx="34" cy="68" rx="11" ry="15" fill="#f6d3cb" stroke="#d9a89d" stroke-width="2.5"/><g fill="#f6d3cb" stroke="#d9a89d" stroke-width="2"><circle cx="25" cy="48" r="4.2"/><circle cx="32" cy="43" r="3.6"/><circle cx="39" cy="41" r="3.4"/><circle cx="45" cy="43" r="3.2"/><circle cx="49" cy="48" r="2.8"/></g>`;
+Object.assign(MLP_STICKERS,{
+ cat:{label:'Kitty',svg:`<svg viewBox="0 0 100 100"><path d="M18 46 14 14l26 15q10-3 20 0l26-15-4 32q6 28-16 38H34Q12 74 18 46Z" fill="#f3dcc6" stroke="#b98f73" stroke-width="3" stroke-linejoin="round"/><path d="M21 24l1 12 9-6ZM79 24l-1 12-9-6Z" fill="#f1b9c0"/><circle cx="38" cy="53" r="3.2" fill="#5d4940"/><circle cx="62" cy="53" r="3.2" fill="#5d4940"/><path d="M46 61h8l-4 5Z" fill="#e9aeb7"/><path d="M50 66q-3 6-8 3m8-3q3 6 8 3" fill="none" stroke="#8b6252" stroke-width="2.5" stroke-linecap="round"/><path d="M24 60l-12-2m12 7-12 3M76 60l12-2m-12 7 12 3" stroke="#c9ab94" stroke-width="2" stroke-linecap="round"/><circle cx="30" cy="62" r="5" fill="#f3b9bf" opacity=".6"/><circle cx="70" cy="62" r="5" fill="#f3b9bf" opacity=".6"/></svg>`},
+ bunny:{label:'Bunny',svg:`<svg viewBox="0 0 100 100"><ellipse cx="36" cy="26" rx="10" ry="22" fill="#fbeff0" stroke="#c9a0a8" stroke-width="3"/><ellipse cx="64" cy="26" rx="10" ry="22" fill="#fbeff0" stroke="#c9a0a8" stroke-width="3"/><ellipse cx="36" cy="28" rx="4.5" ry="14" fill="#f3c3cb"/><ellipse cx="64" cy="28" rx="4.5" ry="14" fill="#f3c3cb"/><circle cx="50" cy="65" r="28" fill="#fbeff0" stroke="#c9a0a8" stroke-width="3"/><circle cx="40" cy="62" r="3.2" fill="#5d4940"/><circle cx="60" cy="62" r="3.2" fill="#5d4940"/><ellipse cx="50" cy="70" rx="3.8" ry="2.6" fill="#e9aeb7"/><path d="M50 72v3q-4 4-8 1m8-4v3q4 4 8 1" fill="none" stroke="#a9808a" stroke-width="2.3" stroke-linecap="round"/><circle cx="32" cy="71" r="5" fill="#f3b9bf" opacity=".6"/><circle cx="68" cy="71" r="5" fill="#f3b9bf" opacity=".6"/></svg>`},
+ duck:{label:'Duckie',svg:`<svg viewBox="0 0 100 100"><path d="M80 62q10-6 14-14-2 16-10 22Z" fill="#f7da82" stroke="#d9b956" stroke-width="2.5" stroke-linejoin="round"/><ellipse cx="50" cy="70" rx="32" ry="20" fill="#f9e08e" stroke="#d9b956" stroke-width="3"/><path d="M38 70q10-11 26 0-9 11-26 0Z" fill="#f4d374" stroke="#d9b956" stroke-width="2"/><circle cx="42" cy="38" r="21" fill="#f9e08e" stroke="#d9b956" stroke-width="3"/><path d="M57 40q15-2 18 4-7 6-18 2Z" fill="#f3b681" stroke="#d58f5c" stroke-width="2.5" stroke-linejoin="round"/><circle cx="46" cy="34" r="3" fill="#5d4940"/><circle cx="50" cy="45" r="4.5" fill="#f3b9bf" opacity=".6"/></svg>`},
+ bottle:{label:'Baby bottle',svg:`<svg viewBox="0 0 100 100"><path d="M44 8q6-4 12 0 2 8 0 12H44q-2-4 0-12Z" fill="#f3d7c2" stroke="#c09a82" stroke-width="3"/><rect x="36" y="20" width="28" height="10" rx="4" fill="#f4c7d0" stroke="#c98591" stroke-width="3"/><rect x="32" y="30" width="36" height="58" rx="12" fill="#e6f0f4" stroke="#9cb5c1" stroke-width="3"/><path d="M33 56h34v21q0 10-10 10H43q-10 0-10-10Z" fill="#fff"/><path d="M32 42h9M32 52h9M32 62h9" stroke="#9cb5c1" stroke-width="2.5" stroke-linecap="round"/><path d="M50 78c-8-6-9-11-5-13 3-1 5 1 5 3 0-2 2-4 5-3 4 2 3 7-5 13Z" fill="#efb8c0"/></svg>`},
+ pacifier:{label:'Pacifier',svg:`<svg viewBox="0 0 100 100"><circle cx="50" cy="26" r="15" fill="none" stroke="#e8a8b4" stroke-width="7"/><path d="M18 60q0-14 14-14h36q14 0 14 14 0 12-14 12H32Q18 72 18 60Z" fill="#cfe3ea" stroke="#8fb0bf" stroke-width="3"/><path d="M42 72q-2 14 8 18 10-4 8-18Z" fill="#f6dfcf" stroke="#c09a82" stroke-width="3"/><circle cx="50" cy="59" r="6" fill="#f4c7d0" stroke="#c98591" stroke-width="2"/></svg>`},
+ onesie:{label:'Onesie',svg:`<svg viewBox="0 0 100 100"><path d="M34 12Q50 26 66 12L88 24 78 44 68 40V68Q68 80 62 86H38Q32 80 32 68V40L22 44 12 24Z" fill="#fde6e8" stroke="#d9a1ab" stroke-width="3" stroke-linejoin="round"/><path d="M50 60c-9-6-10-12-5-14 3-1 5 1 5 3 0-2 2-4 5-3 5 2 4 8-5 14Z" fill="#efb8c0"/><circle cx="45" cy="80" r="2.2" fill="#fff" stroke="#d9a1ab" stroke-width="1.5"/><circle cx="55" cy="80" r="2.2" fill="#fff" stroke="#d9a1ab" stroke-width="1.5"/></svg>`},
+ rattle:{label:'Rattle',svg:`<svg viewBox="0 0 100 100"><path d="M58 58l22 22" stroke="#e9b7c0" stroke-width="9" stroke-linecap="round"/><circle cx="84" cy="84" r="8" fill="none" stroke="#c98591" stroke-width="4"/><circle cx="38" cy="38" r="26" fill="#f6d98c" stroke="#d5ad61" stroke-width="3"/><path d="M16 30q22 12 44-2M14 46q24 14 48 0" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".8"/><circle cx="38" cy="38" r="5" fill="#efb8c0"/></svg>`},
+ footprints:{label:'Baby feet',svg:`<svg viewBox="0 0 100 100">${MLP_FOOT}<g transform="translate(30 -22)">${MLP_FOOT}</g></svg>`},
+ balloon:{label:'Balloon',svg:`<svg viewBox="0 0 100 100"><ellipse cx="50" cy="40" rx="26" ry="31" fill="#f4c0c9" stroke="#c98591" stroke-width="3"/><path d="M44 71h12l-6 7Z" fill="#c98591"/><path d="M50 78q-9 7 0 13t0 7" fill="none" stroke="#b9a199" stroke-width="2.5" stroke-linecap="round"/><path d="M36 28q2-9 10-12" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"/></svg>`},
+ donut:{label:'Donut',svg:`<svg viewBox="0 0 100 100"><path fill-rule="evenodd" d="M12 50a38 38 0 1 0 76 0a38 38 0 1 0-76 0ZM39 50a11 11 0 1 0 22 0a11 11 0 1 0-22 0Z" fill="#f2cfa0" stroke="#c39a66" stroke-width="3"/><path fill-rule="evenodd" d="M18 50a32 32 0 1 0 64 0a32 32 0 1 0-64 0ZM39 50a11 11 0 1 0 22 0a11 11 0 1 0-22 0Z" fill="#f6bfca" stroke="#d08b98" stroke-width="2"/><g stroke-width="3.5" stroke-linecap="round"><path d="M30 30l5 3M62 24l-2 6" stroke="#fff"/><path d="M72 44l6 1M26 58l6-2" stroke="#f7dc91"/><path d="M40 76l3-5M66 70l5 3" stroke="#cfe0c6"/><path d="M52 20v6" stroke="#d5c7e6"/></g></svg>`},
+ icecream:{label:'Ice cream',svg:`<svg viewBox="0 0 100 100"><path d="M31 56h38L50 94Z" fill="#f0cf9a" stroke="#c39a66" stroke-width="3" stroke-linejoin="round"/><path d="M40 58l10 28M60 58L50 86M35 66h30" fill="none" stroke="#d9b07a" stroke-width="2"/><path d="M27 56a23 23 0 1 1 46 0q-5 7-11 1-6 7-12 0-6 7-12 0-6 6-11-1Z" fill="#f6c0cb" stroke="#d08b98" stroke-width="3" stroke-linejoin="round"/><path d="M36 44q2-8 10-9" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"/><circle cx="50" cy="26" r="6" fill="#e0707c" stroke="#bd5060" stroke-width="2"/><path d="M50 20q4-8 10-10" fill="none" stroke="#809b76" stroke-width="2.5" stroke-linecap="round"/></svg>`},
+ cookie:{label:'Cookie',svg:`<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="38" fill="#ebc999" stroke="#bf9560" stroke-width="3"/><g fill="#8b6252"><ellipse cx="36" cy="36" rx="5" ry="4"/><ellipse cx="62" cy="32" rx="4.5" ry="3.6"/><ellipse cx="68" cy="60" rx="5.5" ry="4.4"/><ellipse cx="40" cy="66" rx="5" ry="4"/><ellipse cx="52" cy="50" rx="4" ry="3.4"/><ellipse cx="27" cy="55" rx="3.6" ry="3"/></g></svg>`},
+ teacup:{label:'Tea cup',svg:`<svg viewBox="0 0 100 100"><ellipse cx="50" cy="82" rx="36" ry="7" fill="#f4e4e6" stroke="#c9a0a8" stroke-width="3"/><path d="M72 46h6q12 0 8 12-3 8-14 8" fill="none" stroke="#c9a0a8" stroke-width="5" stroke-linecap="round"/><path d="M22 40h50v18q0 22-25 22T22 58Z" fill="#fdf1f2" stroke="#c9a0a8" stroke-width="3"/><ellipse cx="47" cy="40" rx="25" ry="5" fill="#e3b79c" stroke="#c9a0a8" stroke-width="2.5"/><path d="M47 70c-9-6-10-12-5-14 3-1 5 1 5 3 0-2 2-4 5-3 5 2 4 8-5 14Z" fill="#efb8c0"/><path d="M36 28q-6-8 0-14m14 14q-6-8 0-14m14 14q-6-8 0-14" fill="none" stroke="#cdbab3" stroke-width="3" stroke-linecap="round"/></svg>`},
+ cactus:{label:'Cactus',svg:`<svg viewBox="0 0 100 100"><path d="M40 58H30q-6 0-6-6V44M60 50h10q6 0 6-6V36" fill="none" stroke="#7f9d74" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/><path d="M40 58H30q-6 0-6-6V44M60 50h10q6 0 6-6V36" fill="none" stroke="#b8d1a8" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/><path d="M38 70V34q0-14 12-14t12 14v36Z" fill="#b8d1a8" stroke="#7f9d74" stroke-width="3"/><path d="M46 32h-3M54 40h3M46 50h-3M54 58h3" stroke="#7f9d74" stroke-width="2" stroke-linecap="round"/><circle cx="50" cy="18" r="5" fill="#f4b9c4" stroke="#d08b98" stroke-width="2"/><path d="M30 70h40l-5 22H35Z" fill="#e9b7a6" stroke="#c0887a" stroke-width="3" stroke-linejoin="round"/><rect x="27" y="66" width="46" height="9" rx="4" fill="#f0c6b6" stroke="#c0887a" stroke-width="3"/></svg>`},
+ plant:{label:'Potted plant',svg:`<svg viewBox="0 0 100 100"><path d="M50 66Q28 62 24 32q22 2 26 34Z" fill="#b9cba9" stroke="#809b76" stroke-width="3" stroke-linejoin="round"/><path d="M50 66Q72 62 76 32q-22 2-26 34Z" fill="#b9cba9" stroke="#809b76" stroke-width="3" stroke-linejoin="round"/><path d="M50 66Q38 46 50 14q12 32 0 52Z" fill="#a9c69b" stroke="#789873" stroke-width="3" stroke-linejoin="round"/><path d="M28 68h44l-6 24H34Z" fill="#f0c6c0" stroke="#c98a85" stroke-width="3" stroke-linejoin="round"/><rect x="25" y="63" width="50" height="9" rx="4" fill="#f6d5d0" stroke="#c98a85" stroke-width="3"/></svg>`},
+ mushroom:{label:'Mushroom',svg:`<svg viewBox="0 0 100 100"><path d="M38 52h24l3 30q0 8-15 8t-15-8Z" fill="#fbf0e4" stroke="#c9ad94" stroke-width="3" stroke-linejoin="round"/><path d="M10 54Q10 14 50 14Q90 14 90 54Q50 64 10 54Z" fill="#efb0b4" stroke="#c98187" stroke-width="3" stroke-linejoin="round"/><g fill="#fff" opacity=".9"><circle cx="30" cy="38" r="6"/><circle cx="54" cy="28" r="5"/><circle cx="72" cy="44" r="6"/><circle cx="46" cy="47" r="4"/></g></svg>`},
+ tape1:{label:'Pink washi tape',svg:`<svg viewBox="0 0 100 100"><path d="${MLP_TAPE}" fill="#f8d0d6" stroke="#e4a9b3" stroke-width="2" stroke-linejoin="round"/><path d="M24 36l-12 28M40 36l-12 28M56 36l-12 28M72 36l-12 28M88 36l-12 28" stroke="#fff" stroke-width="5" opacity=".55"/></svg>`},
+ tape2:{label:'Sage washi tape',svg:`<svg viewBox="0 0 100 100"><path d="${MLP_TAPE}" fill="#d3e2ca" stroke="#a6bd9b" stroke-width="2" stroke-linejoin="round"/><g fill="#fff" opacity=".7"><circle cx="22" cy="42" r="3"/><circle cx="40" cy="58" r="3"/><circle cx="58" cy="42" r="3"/><circle cx="76" cy="58" r="3"/></g></svg>`},
+ banner:{label:'Bunting',svg:`<svg viewBox="0 0 100 100"><g transform="translate(0 14)"><path d="M6 22q44 16 88 0" fill="none" stroke="#b9a199" stroke-width="2.5" stroke-linecap="round"/><path d="M8 24.5 20 26 14 44Z" fill="#f4b9c4" stroke="#d08b98" stroke-width="2" stroke-linejoin="round"/><path d="M26 28 38 29 32 47Z" fill="#f6dd9a" stroke="#d2ad5c" stroke-width="2" stroke-linejoin="round"/><path d="M44 29.5 56 29.5 50 48Z" fill="#cfe0c6" stroke="#9db693" stroke-width="2" stroke-linejoin="round"/><path d="M62 29 74 28 68 47Z" fill="#d5c7e6" stroke="#a892c0" stroke-width="2" stroke-linejoin="round"/><path d="M80 26 92 24.5 86 44Z" fill="#f4b9c4" stroke="#d08b98" stroke-width="2" stroke-linejoin="round"/></g></svg>`},
+ mama:{label:'Mama badge',svg:`<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="#f8dde0" stroke="#c98591" stroke-width="3"/><circle cx="50" cy="50" r="33" fill="none" stroke="#fff" stroke-width="2" stroke-dasharray="3 4"/><path d="M50 40c-7-5-8-10-4-12 3-1 4 1 4 3 0-2 1-4 4-3 4 2 3 7-4 12Z" fill="#e58f9c"/><text x="50" y="63" text-anchor="middle" font-family="Georgia,serif" font-style="italic" font-weight="700" font-size="21" fill="#a8626f">mama</text></svg>`},
+ speech:{label:'Love bubble',svg:`<svg viewBox="0 0 100 100"><path d="M16 26q0-10 10-10h48q10 0 10 10v30q0 10-10 10H56L40 84V66H26q-10 0-10-10Z" fill="#fdeef0" stroke="#c98591" stroke-width="3" stroke-linejoin="round"/><path d="M50 52c-9-7-11-13-5-16 3-1 5 1 5 4 0-3 2-5 5-4 6 3 4 9-5 16Z" fill="#efb8c0" stroke="#c98591" stroke-width="2"/></svg>`},
+ notebook:{label:'Notebook',svg:`<svg viewBox="0 0 100 100"><rect x="22" y="12" width="58" height="76" rx="8" fill="#fbeedf" stroke="#c4a07f" stroke-width="3"/><path d="M38 32h34M38 46h34M38 60h22" stroke="#e3c9ae" stroke-width="3" stroke-linecap="round"/><path d="M62 78c-5-4-6-8-3-9 2-1 3 1 3 2 0-1 1-3 3-2 3 1 2 5-3 9Z" fill="#efb8c0"/><g fill="#fff" stroke="#c4a07f" stroke-width="2.5"><circle cx="22" cy="26" r="4.5"/><circle cx="22" cy="44" r="4.5"/><circle cx="22" cy="62" r="4.5"/><circle cx="22" cy="78" r="4.5"/></g></svg>`},
+ cherry:{label:'Cherries',svg:`<svg viewBox="0 0 100 100"><path d="M34 70Q38 36 66 18M68 68Q64 40 66 18" fill="none" stroke="#8fa586" stroke-width="3.5" stroke-linecap="round"/><path d="M66 20q14-8 22 2-12 8-22-2Z" fill="#b9cba9" stroke="#809b76" stroke-width="2.5" stroke-linejoin="round"/><circle cx="34" cy="72" r="15" fill="#ec9aa2" stroke="#c8707a" stroke-width="3"/><circle cx="68" cy="70" r="15" fill="#ec9aa2" stroke="#c8707a" stroke-width="3"/><path d="M27 66q2-5 7-5M61 64q2-5 7-5" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round"/></svg>`},
+ crown:{label:'Crown',svg:`<svg viewBox="0 0 100 100"><path d="M14 72 8 28l24 20 18-30 18 30 24-20-6 44Z" fill="#f7dc91" stroke="#d2ae60" stroke-width="3" stroke-linejoin="round"/><rect x="14" y="72" width="72" height="12" rx="4" fill="#f4cb6e" stroke="#d2ae60" stroke-width="3"/><circle cx="50" cy="60" r="4.5" fill="#ef9aa5"/><circle cx="30" cy="62" r="3.2" fill="#a9c2ce"/><circle cx="70" cy="62" r="3.2" fill="#a9c2ce"/></svg>`}
+});
+
+/* Sticker tray categories (every sticker appears in exactly one) */
+const MLP_CATS=[
+ ['cute','Cute',['heart','heart2','star','sparkle','bow','rainbow','cloud','sun','moon','balloon','crown','speech']],
+ ['animals','Animals',['bear','cat','bunny','duck','paw','butterfly']],
+ ['plants','Flowers',['flower','flower2','tulip','leaf','cactus','plant','mushroom']],
+ ['baby','Mom & Baby',['bottle','pacifier','onesie','rattle','footprints','milk','mama','gift']],
+ ['food','Food',['coffee','teacup','cupcake','cake','strawberry','donut','icecream','cookie','cherry']],
+ ['deco','Deco',['tape1','tape2','banner','book','notebook','pencil','camera','envelope']]
+];
+
+/* ===== Data helpers: journal decorations (per date) and scrapbook pages ===== */
+const mlpId=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+let mlpScrapCur=null;
+function mlpMigrate(){
+ /* One-time move of the older per-date scrapbook (note + stickers) into pages. Old keys are left untouched. */
+ if(S.scrapMigrated)return;
+ const notes=S.scrapbookNotes||{},decs=S.scrapbookDecorations||{},dates=new Set();
+ Object.keys(notes).forEach(d=>{if(String(notes[d]||'').trim())dates.add(d)});
+ Object.keys(decs).forEach(d=>{if((decs[d]||[]).length)dates.add(d)});
+ if(!dates.size)return;
+ const pages=[...dates].sort().reverse().map(d=>({id:'m-'+d,title:'Memories · '+d,date:d,note:notes[d]||'',items:(decs[d]||[]).map((it,i)=>({id:'m-'+d+'-'+i,kind:'sticker',type:it.type,x:it.x??50,y:it.y??50,scale:it.scale||1,rot:it.rot||0}))}));
+ S.scrapPages=(Array.isArray(S.scrapPages)?S.scrapPages:[]).concat(pages);S.scrapMigrated=true;save();
+}
+function mlpScrapPage(create){
+ const a=Array.isArray(S.scrapPages)?S.scrapPages:null;
+ let p=a&&(a.find(x=>x.id===mlpScrapCur)||a[0]);
+ if(!p&&create){p={id:mlpId(),title:'',date:iso(now()),note:'',items:[]};if(!a)S.scrapPages=[];S.scrapPages.unshift(p)}
+ if(p)mlpScrapCur=p.id;return p||null;
+}
+function mlpItems(kind,create){
+ if(kind==='journal'){
+  const d=iso(cur);
+  if(!S.journalDecorations){if(!create)return[];S.journalDecorations={}}
+  if(!S.journalDecorations[d]){if(!create)return[];S.journalDecorations[d]=[]}
+  return S.journalDecorations[d];
+ }
+ const p=mlpScrapPage(create);return p?(p.items||(p.items=[])):[];
+}
+function mlpPageBarHTML(){
+ const pages=Array.isArray(S.scrapPages)?S.scrapPages:[],cp=mlpScrapPage();
+ const f=d=>{try{return new Date(d+'T12:00').toLocaleDateString(undefined,{day:'numeric',month:'short'})}catch(_){return ''}};
+ return'<div class="mlp-pages">'+pages.map(p=>`<button type="button" class="mlp-chip ${cp&&p.id===cp.id?'on':''}" data-mlp-page="${e(p.id)}"><b>${e(p.title||'Untitled')}</b><small>${f(p.date)}</small></button>`).join('')+'<button type="button" class="mlp-chip new" data-mlp-newpage>＋ New page</button></div>'+(cp?'<button type="button" class="x mlp-delpage" data-mlp-delpage>Delete this page 🗑</button>':'');
+}
+function mlpBoardHTML(kind){
+ const sc_=kind==='scrap';
+ return`<div class="mlp-board" id="mlpBoard" data-kind="${kind}">
+<div class="mlp-tabs noprint" id="mlpTabs"></div>
+<div class="mlp-tray noprint" id="mlpTray"></div>
+<p class="mlp-help noprint">Tap a sticker to add it, or press &amp; drag it onto the page. Tap an item on the page to move, resize, rotate or delete it.</p>
+<div class="mlp-actions noprint"><button type="button" class="btn mlp-mini" data-mlp-addtext>Aa Text</button>${sc_?'<button type="button" class="btn mlp-mini" data-mlp-addphoto>📷 Photo</button>':''}</div>
+<div class="mlp-canvas" id="mlpCanvas" data-kind="${kind}" data-ph="${sc_?'Little moments, kept close ♡':'A little space for your memories'}"></div>
+<div class="mlp-selbar noprint" id="mlpSelBar"></div>
+</div>`;
+}
+
 const F_={
 hero:()=>{const h=new Date().getHours(),t=new Date().toLocaleDateString(undefined,{weekday:'long',day:'numeric',month:'long',year:'numeric'});return card(`<small class="mut">${t}</small><h1>${h<12?'Good morning':h<18?'Good afternoon':'Good evening'}, <input class="nm" data-k="name" value="${e(S.name)}" placeholder="Mama"> 🌸</h1><p class="mut">Welcome to your Mom Life Planner. Take it one gentle step at a time.</p><p class="q">“${Q[Math.floor(Date.now()/864e5)%Q.length]}”</p>`,'hero wide')},
 stats:()=>cw(()=>{const D=sc('d'),x=(S['todo@'+D]||[]).concat(S['top3@'+D]||[]),s=S['sc@'+D]||SCDEF.map(()=>({d:0}));return[['✅','Tasks done',x.filter(a=>a.d).length+'/'+x.length],['💧','Water',(+S['water@'+D]||0)+'/8'],['🌸','Self-care',s.filter(a=>a.d).length+'/'+s.length]].map(([i,l,v])=>`<div class="st"><span>${i}</span><b>${v}</b><small>${l}</small></div>`).join('')},'div','stats wide'),
@@ -153,11 +324,15 @@ ov:()=>card('<h3>Daily overview</h3>'+cw(()=>{const D=sc('d'),o=S['sched@'+D]||{
 week:()=>card('<h3>Weekly progress</h3>'+cw(()=>{const mo=mon(cur);let tt=0,td=0,h='';for(let i=0;i<7;i++){const d=new Date(mo);d.setDate(mo.getDate()+i);const x=(S['todo@'+iso(d)]||[]).concat(S['top3@'+iso(d)]||[]),dn=x.filter(a=>a.d).length;tt+=x.length;td+=dn;h+=`<div><i style="height:${Math.max(4,x.length?dn/x.length*100:0)}px"></i><small>${DAYS[i]}</small></div>`}const p=tt?td/tt*100:0;return`<div class="wk">${h}</div><div class="bar"><i style="width:${p}%"></i></div><p class="mut">${td} of ${tt} tasks done this week (${Math.round(p)}%)</p>`},'div'),'wide'),
 fin:()=>cw(()=>{const m=sc('m'),inc=sum('inc@'+m,2),ex=sum('exp@'+m,3),bl=sum('bills@'+m,2),lf=inc-ex-bl;return[['Income',inc],['Expenses',ex],['Bills',bl],['Left to spend',lf,lf<0?'neg':''],['Saved so far',sum('sav',2)]].map(([l,v,c])=>`<div class="st"><small>${l}</small><b class="${c||''}">${money(v)}</b></div>`).join('')},'div','stats wide'),
 finov:()=>card('<h3>Family financial overview</h3>'+cw(()=>{const m=sc('m'),cat={},bl=S['bills@'+m]||[];(S['exp@'+m]||[]).forEach(r=>{const c=String(r[2]||'').trim()||'Other';cat[c]=(cat[c]||0)+(+r[3]||0)});const inc=sum('inc@'+m,2),ex=sum('exp@'+m,3),pl=sum('budget@'+m,1),tot=ex||1;return`<div class="ln"><span>Budget used</span><b>${pl?Math.round(ex/pl*100)+'%':'—'}</b></div><div class="ln"><span>Savings rate</span><b>${inc?Math.round((inc-ex-sum('bills@'+m,2))/inc*100)+'%':'—'}</b></div><div class="ln"><span>Bills paid</span><b>${bl.filter(r=>+r[3]).length}/${bl.filter(r=>r[0]||r[2]).length}</b></div><h4>Spending by category</h4>`+(Object.entries(cat).filter(x=>x[1]).sort((a,b)=>b[1]-a[1]).map(([c,v])=>`<div class="ln"><span>${e(c)}</span><b>${money(v)}</b></div><div class="bar"><i style="width:${v/tot*100}%"></i></div>`).join('')||'<p class="mut">Add expenses to see your breakdown.</p>')},'div')),
-scrapbook:()=>card(`<h3>My little scrapbook <small>Photos & stickers</small></h3>
-<p class="mut">Save the little moments you want to remember. Photos stay on this device for now; cloud photo sync will be connected after Supabase setup.</p>
-<div class="scrap-actions"><label class="btn" for="mlpPhotoInput">＋ Add photos</label><input id="mlpPhotoInput" type="file" accept="image/*" multiple hidden><span class="mut">Choose from your gallery</span></div>
-<h4>Sticker collection</h4><div class="sticker-picker">${['🌸','🌷','🧸','🎀','💗','🤍','⭐','✨','☁️','🦋','🍓','🌼','🪻','🐻','☕','🌙','🧁','💐'].map(x=>`<button type="button" class="sticker-choice" data-sticker="${x}">${x}</button>`).join('')}</div>
-<h4>My memories</h4><div id="mlpScrapItems" class="scrap-grid"><p class="mut">Your photos and stickers will appear here.</p></div>`,'wide')};
+journalCanvas:()=>card(`<h3>Decorate this entry <small>Stickers · text</small></h3>${mlpBoardHTML('journal')}`,'journal-decor'),
+scrapbook:()=>{mlpMigrate();const pg=mlpScrapPage();return card(`<h3>My little scrapbook <small>Photos · words · stickers</small></h3>
+<p class="mut">Build a page: add photos from your gallery, write a caption, decorate with stickers and arrange everything. Pages are saved, so you can open them again anytime.</p>
+<div id="mlpPageBar">${mlpPageBarHTML()}</div>
+<input id="mlpScrapTitle" class="mlp-title" maxlength="80" placeholder="Page title or caption…" value="${e(pg?pg.title:'')}">
+${mlpBoardHTML('scrap')}
+<h4>My moment</h4><textarea class="scrapbook-note" id="mlpScrapNote" placeholder="Write the moment you want to remember…">${e(pg?pg.note:'')}</textarea>
+<input id="mlpPhotoInput" type="file" accept="image/*" multiple hidden>
+<details id="mlpLib" class="mlp-lib noprint"><summary>My photo library</summary><p class="mut">Tap a photo to add it to this page.</p><div id="mlpScrapItems" class="scrap-grid"></div></details>`,'wide')}};
 const R={
 F:w=>F_[w.n](w),
 L(w,k){const a=S[k]||(S[k]=(w.def||[]).map(t=>({t,d:0})));return card(`<h3>${w.t}</h3>`+cw(()=>prog(S[k]),'div','pr')+a.map((i,r)=>`<div class="it"><input type="checkbox" data-k="${k}" data-r="${r}" data-f="d" ${i.d?'checked':''}><input class="tx" data-k="${k}" data-r="${r}" data-f="t" value="${e(i.t)}"><button class="x" data-a="del" data-k="${k}" data-r="${r}" aria-label="Delete">×</button></div>`).join('')+`<div class="it add"><input class="addin" data-k="${k}" placeholder="${e(w.ph||'Add…')}"><button class="btn" data-a="add" data-k="${k}">Add</button></div>`)},
@@ -206,7 +381,12 @@ addEventListener('hashchange',route);route();
 </script>
 
 <div class="mlp-floats noprint">
-  <div class="mlp-float mlp-player"><button id="mlpMusicToggle" aria-label="Play background music">♫ Play</button><span class="mut">Soft music</span><input id="mlpVolume" class="mlp-volume" type="range" min="0" max="100" value="22" aria-label="Music volume"></div>
+  <div class="mlp-music-panel" id="mlpMusicPanel">
+    <b>Music Corner</b>
+    <select id="mlpTrack" aria-label="Choose instrumental"><option value="piano">Soft Piano</option><option value="lofi">Lofi Chill</option><option value="musicbox">Music Box</option><option value="ambient">Gentle Ambient</option><option value="nature">Nature Calm</option></select>
+    <div class="mlp-player"><button class="btn" id="mlpMusicToggle" aria-label="Play background music">♫ Play</button><label class="mut" for="mlpVolume">Volume</label><input id="mlpVolume" class="mlp-volume" type="range" min="0" max="100" value="22" aria-label="Music volume"></div>
+  </div>
+  <button class="mlp-float" id="mlpMusicOpen" aria-expanded="false">♫ Music</button>
   <button class="mlp-float mlp-account" id="mlpAccountButton">♡ Account · Local mode</button>
 </div>
 <div class="mlp-login" id="mlpLogin">
@@ -223,58 +403,354 @@ addEventListener('hashchange',route);route();
   </div>
 </div>
 <script>
-/* Original, offline-friendly instrumental generated with Web Audio (no external music file). */
+/* Five original offline-friendly instrumental patterns generated with Web Audio. */
 (()=>{
- let ctx=null, timer=null, playing=false, step=0, master=null;
- const notes=[261.63,329.63,392.00,329.63,293.66,349.23,440.00,349.23,261.63,329.63,392.00,523.25,440.00,392.00,329.63,293.66];
- const toggle=document.getElementById('mlpMusicToggle'),vol=document.getElementById('mlpVolume');
- function tone(freq,when,duration,gain){
-   const o=ctx.createOscillator(),g=ctx.createGain();o.type='sine';o.frequency.value=freq;
-   g.gain.setValueAtTime(.0001,when);g.gain.exponentialRampToValueAtTime(Math.max(.0002,gain),when+.035);g.gain.exponentialRampToValueAtTime(.0001,when+duration);
-   o.connect(g);g.connect(master);o.start(when);o.stop(when+duration+.03);
- }
- function tick(){if(!playing||!ctx)return;const t=ctx.currentTime+.03,n=notes[step++%notes.length],v=(+vol.value||0)/100*.10;tone(n,t,1.15,v);if(step%4===0){tone(n/2,t,.95,v*.35);tone(n*1.5,t+.02,.7,v*.12)}}
- function start(){const AC=window.AudioContext||window.webkitAudioContext;if(!AC){alert('Background music is not supported in this browser.');return}ctx=ctx||new AC();ctx.resume();master=master||ctx.createGain();master.gain.value=1;master.connect(ctx.destination);playing=true;tick();timer=setInterval(tick,780);toggle.textContent='Ⅱ Pause';toggle.setAttribute('aria-label','Pause background music')}
+ let ctx=null,timer=null,playing=false,step=0,master=null,track='piano';
+ const patterns={
+  piano:[261.63,329.63,392,329.63,293.66,349.23,440,349.23,261.63,329.63,392,523.25,440,392,329.63,293.66],
+  lofi:[196,246.94,293.66,246.94,174.61,220,261.63,220,196,246.94,293.66,349.23,293.66,246.94,220,196],
+  musicbox:[523.25,659.25,783.99,659.25,587.33,698.46,880,698.46,783.99,987.77,1046.5,987.77,880,783.99,698.46,659.25],
+  ambient:[130.81,164.81,196,164.81,146.83,174.61,220,174.61,130.81,164.81,196,220,196,174.61,164.81,146.83],
+  nature:[220,261.63,329.63,392,329.63,261.63,196,220,261.63,293.66,349.23,293.66,261.63,220,196,174.61]
+ };
+ const toggle=document.getElementById('mlpMusicToggle'),vol=document.getElementById('mlpVolume'),trackSelect=document.getElementById('mlpTrack'),panel=document.getElementById('mlpMusicPanel'),open=document.getElementById('mlpMusicOpen');
+ open.addEventListener('click',()=>{const yes=panel.classList.toggle('open');open.setAttribute('aria-expanded',String(yes))});
+ function tone(freq,when,duration,gain,type='sine'){const o=ctx.createOscillator(),g=ctx.createGain();o.type=type;o.frequency.value=freq;g.gain.setValueAtTime(.0001,when);g.gain.exponentialRampToValueAtTime(Math.max(.0002,gain),when+.05);g.gain.exponentialRampToValueAtTime(.0001,when+duration);o.connect(g);g.connect(master);o.start(when);o.stop(when+duration+.04)}
+ function tick(){if(!playing||!ctx)return;const t=ctx.currentTime+.03,notes=patterns[track]||patterns.piano,n=notes[step++%notes.length],v=(+vol.value||0)/100*.085;if(track==='musicbox'){tone(n,t,1.05,v);tone(n*2,t+.015,.55,v*.12)}else if(track==='lofi'){tone(n,t,1.2,v,'triangle');if(step%4===0)tone(n/2,t,.9,v*.32)}else if(track==='ambient'){tone(n,t,2.2,v*.7);tone(n*1.5,t+.03,1.8,v*.12)}else if(track==='nature'){tone(n,t,1.6,v*.75);if(step%4===0)tone(n*2.01,t+.04,.22,v*.08)}else{tone(n,t,1.15,v);if(step%4===0)tone(n/2,t,.95,v*.3)}}
+ function start(){const AC=window.AudioContext||window.webkitAudioContext;if(!AC){alert('Background music is not supported in this browser.');return}ctx=ctx||new AC();ctx.resume();master=master||ctx.createGain();master.gain.value=1;master.connect(ctx.destination);playing=true;step=0;tick();timer=setInterval(tick,track==='ambient'?1500:780);toggle.textContent='Ⅱ Pause';toggle.setAttribute('aria-label','Pause background music')}
  function stop(){playing=false;if(timer)clearInterval(timer);timer=null;toggle.textContent='♫ Play';toggle.setAttribute('aria-label','Play background music')}
  toggle.addEventListener('click',()=>playing?stop():start());
+ trackSelect.addEventListener('change',()=>{track=trackSelect.value;if(playing){stop();start()}});
  vol.addEventListener('input',()=>{if(master)master.gain.value=(+vol.value)/100});
 })();
-
-/* Local scrapbook storage: photos are stored in IndexedDB, not localStorage. */
+/* ===== Stickers · Journal · Scrapbook board =====
+   Pointer Events (touch + mouse). Positions are percentages of the canvas, sizes are in
+   "units" (canvas width = 360 units) so every device shows the same layout. */
 const MLP_DB='mom-life-planner-media',MLP_STORE='photos';
 function mlpDb(){return new Promise((resolve,reject)=>{const req=indexedDB.open(MLP_DB,1);req.onupgradeneeded=()=>req.result.createObjectStore(MLP_STORE,{keyPath:'id',autoIncrement:true});req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error)})}
-async function mlpPhotoAdd(file){
+/* Saves the photo on this device (IndexedDB) and uploads it in the background when signed in. */
+async function mlpPhotoAdd(file,onPath){
  const db=await mlpDb();
- await new Promise((resolve,reject)=>{const tx=db.transaction(MLP_STORE,'readwrite');tx.objectStore(MLP_STORE).add({blob:file,name:file.name,created:Date.now()});tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error)});
+ const id=await new Promise((resolve,reject)=>{const tx=db.transaction(MLP_STORE,'readwrite');let k;const rq=tx.objectStore(MLP_STORE).add({blob:file,name:file.name,created:Date.now()});rq.onsuccess=()=>{k=rq.result};tx.oncomplete=()=>resolve(k);tx.onerror=()=>reject(tx.error)});
  if(mlpSupabase&&mlpUser){
-  const safeName=(file.name||'photo').replace(/[^a-zA-Z0-9._-]/g,'_'),path=mlpUser.id+'/'+Date.now()+'_'+safeName;
-  const {error:upErr}=await mlpSupabase.storage.from('planner-photos').upload(path,file,{upsert:false});
-  if(!upErr){const {error:metaErr}=await mlpSupabase.from('planner_photos').insert({user_id:mlpUser.id,file_path:path,file_name:file.name||'Photo'});if(metaErr)mlpStatus('Photo uploaded, but its cloud record failed: '+metaErr.message)}
-  else mlpStatus('Photo saved on this device. Cloud upload issue: '+upErr.message);
+  (async()=>{try{
+   const safeName=(file.name||'photo').replace(/[^a-zA-Z0-9._-]/g,'_'),path=mlpUser.id+'/'+Date.now()+'_'+safeName;
+   const {error:upErr}=await mlpSupabase.storage.from('planner-photos').upload(path,file,{upsert:false});
+   if(upErr){mlpStatus('Photo saved on this device. Cloud upload issue: '+upErr.message);return}
+   const {error:metaErr}=await mlpSupabase.from('planner_photos').insert({user_id:mlpUser.id,file_path:path,file_name:file.name||'Photo'});
+   if(metaErr)mlpStatus('Photo uploaded, but its cloud record failed: '+metaErr.message);
+   const db2=await mlpDb();await new Promise(res=>{const tx=db2.transaction(MLP_STORE,'readwrite'),st=tx.objectStore(MLP_STORE),g=st.get(id);g.onsuccess=()=>{if(g.result){g.result.path=path;st.put(g.result)}};tx.oncomplete=res;tx.onerror=res});
+   if(onPath)onPath(path);
+  }catch(err){mlpStatus('Cloud upload issue: '+err.message)}})();
  }
+ return id;
 }
 async function mlpPhotoAll(){const db=await mlpDb();return new Promise((resolve,reject)=>{const r=db.transaction(MLP_STORE).objectStore(MLP_STORE).getAll();r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)})}
 async function mlpPhotoDelete(id){const db=await mlpDb();return new Promise((resolve,reject)=>{const tx=db.transaction(MLP_STORE,'readwrite');tx.objectStore(MLP_STORE).delete(Number(id));tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error)})}
-async function mlpRenderScrapbook(){
- const host=document.getElementById('mlpScrapItems');if(!host)return;
- const items=await mlpPhotoAll();const stickers=JSON.parse(localStorage.getItem('mlp1')||'{}').mlpStickers||[];
- host.innerHTML='';
- items.forEach(item=>{const url=URL.createObjectURL(item.blob),tile=document.createElement('div');tile.className='scrap-tile';tile.innerHTML=`<img alt=""> <button aria-label="Delete photo">×</button>`;tile.querySelector('img').src=url;tile.querySelector('button').onclick=async()=>{await mlpPhotoDelete(item.id);mlpRenderScrapbook()};host.append(tile)});
- if(mlpSupabase&&mlpUser){
-  const {data:remote,error}=await mlpSupabase.from('planner_photos').select('id,file_path,file_name').eq('user_id',mlpUser.id).order('created_at',{ascending:false});
-  if(!error)for(const item of (remote||[])){
-   const {data:signed}=await mlpSupabase.storage.from('planner-photos').createSignedUrl(item.file_path,3600);
-   if(signed?.signedUrl){const tile=document.createElement('div');tile.className='scrap-tile';tile.innerHTML=`<img alt=""><button aria-label="Delete cloud photo">×</button>`;tile.querySelector('img').src=signed.signedUrl;tile.querySelector('button').onclick=async()=>{await mlpSupabase.storage.from('planner-photos').remove([item.file_path]);await mlpSupabase.from('planner_photos').delete().eq('id',item.id);mlpRenderScrapbook()};host.append(tile)}
-  }
- }
- stickers.forEach((st,i)=>{const tile=document.createElement('div');tile.className='scrap-tile';tile.innerHTML=`<span class="scrap-emoji">${st}</span><button aria-label="Delete sticker">×</button>`;tile.querySelector('button').onclick=()=>{const data=JSON.parse(localStorage.getItem('mlp1')||'{}');data.mlpStickers=(data.mlpStickers||[]).filter((_,n)=>n!==i);localStorage.setItem('mlp1',JSON.stringify(data));if(typeof S!=='undefined')S.mlpStickers=data.mlpStickers;mlpRenderScrapbook()};host.append(tile)});
- if(!items.length&&!stickers.length&&host.children.length===0)host.innerHTML='<p class="mut">No memories yet. Add a photo or choose a sticker above.</p>';
+
+(()=>{
+const UNIT=360,clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const DEV=(()=>{try{let d=localStorage.getItem('mlpDev');if(!d){d=mlpId();localStorage.setItem('mlpDev',d)}return d}catch(_){return'x'}})();
+let cat='cute',sel=null,ctx='',drag=null,ghost=null,raf=0;
+const urlCache={};
+const cvEl=()=>document.getElementById('mlpCanvas');
+const kindOf=()=>{const c=cvEl();return c?c.dataset.kind:'journal'};
+const list=create=>mlpItems(kindOf(),create);
+const find=id=>list(false).find(i=>i.id===id);
+const ctxKey=()=>{const k=kindOf();return k+':'+(k==='journal'?iso(cur):(mlpScrapPage()?.id||''))};
+const refreshPageBar=()=>{const b=document.getElementById('mlpPageBar');if(b)b.innerHTML=mlpPageBarHTML()};
+
+/* ---------- tray ---------- */
+function buildTray(){
+ const tabs=document.getElementById('mlpTabs'),tray=document.getElementById('mlpTray');if(!tabs||!tray)return;
+ tabs.innerHTML=MLP_CATS.map(c=>`<button type="button" class="mlp-tab ${c[0]===cat?'on':''}" data-mlp-cat="${c[0]}">${c[1]}</button>`).join('');
+ const c=MLP_CATS.find(x=>x[0]===cat)||MLP_CATS[0];
+ tray.innerHTML=c[2].filter(id=>MLP_STICKERS[id]).map(id=>`<button type="button" class="mlp-tile" data-mlp-sticker="${id}" aria-label="Add ${e(MLP_STICKERS[id].label)}" title="${e(MLP_STICKERS[id].label)}">${MLP_STICKERS[id].svg}</button>`).join('');
 }
-document.addEventListener('change',async ev=>{if(ev.target.id==='mlpPhotoInput'){for(const f of [...ev.target.files])if(f.type.startsWith('image/'))await mlpPhotoAdd(f);ev.target.value='';mlpRenderScrapbook()}});
-document.addEventListener('click',ev=>{const b=ev.target.closest('[data-sticker]');if(!b)return;S.mlpStickers=S.mlpStickers||[];S.mlpStickers.push(b.dataset.sticker);save();mlpRenderScrapbook()});
-const mlpOrigRender=window.render;
-if(typeof mlpOrigRender==='function'){window.render=function(){mlpOrigRender();mlpRenderScrapbook()}}
-document.addEventListener('DOMContentLoaded',mlpRenderScrapbook);
+
+/* ---------- canvas ---------- */
+function fit(cv){cv.style.setProperty('--u',(cv.clientWidth/UNIT)+'px')}
+function apply(el,it){
+ const k=it.kind||'sticker',s=it.scale||1;
+ el.style.left=(it.x??50)+'%';el.style.top=(it.y??50)+'%';
+ el.style.transform=`translate(-50%,-50%) rotate(${it.rot||0}deg)`;
+ if(k==='text')el.style.fontSize=`calc(var(--u) * ${20*s})`;
+ else el.style.width=`calc(var(--u) * ${(k==='photo'?110:56)*s})`;
+}
+function makeEl(it){
+ if(!it.id)it.id=mlpId();
+ const k=it.kind||'sticker',el=document.createElement('div');
+ el.className='mlp-item mlp-'+k+(it.id===sel?' sel':'');el.dataset.id=it.id;
+ if(k==='sticker'){const d=MLP_STICKERS[it.type];if(!d)return null;el.innerHTML='<div class="mlp-body">'+d.svg+'</div>'}
+ else if(k==='text'){el.innerHTML='<div class="mlp-body"></div>';const b=el.firstChild;b.textContent=it.text||'';b.style.color=it.color||'#5b4339'}
+ else if(k==='photo'){el.innerHTML='<div class="mlp-body"><img alt="" draggable="false"></div>';const im=el.querySelector('img');im.dataset.iid=it.id;im.style.aspectRatio=String(1/(it.ar||1))}
+ else return null;
+ el.insertAdjacentHTML('beforeend','<i class="mlp-handle" aria-hidden="true"></i>');
+ apply(el,it);return el;
+}
+function draw(){
+ const cv=cvEl();if(!cv)return;
+ cv.querySelectorAll('.mlp-item').forEach(n=>n.remove());
+ list(false).forEach(it=>{const el=makeEl(it);if(el)cv.append(el)});
+ hydrate(cv);
+}
+function hydrate(cv){
+ cv.querySelectorAll('img[data-iid]').forEach(async img=>{
+  const it=find(img.dataset.iid);if(!it)return;
+  const u=await photoUrl(it),body=img.closest('.mlp-body');
+  if(!u){if(body)body.classList.add('missing');return}
+  img.onload=()=>{if(!it.ar&&img.naturalWidth){it.ar=img.naturalHeight/img.naturalWidth;img.style.aspectRatio=String(img.naturalWidth/img.naturalHeight)}};
+  img.src=u;
+ });
+}
+async function photoUrl(it){
+ try{
+  if(it.pid!=null&&(it.dev==null||it.dev===DEV)){
+   const k='l'+it.pid;if(urlCache[k])return urlCache[k];
+   const db=await mlpDb();
+   const rec=await new Promise(res=>{const r=db.transaction(MLP_STORE).objectStore(MLP_STORE).get(Number(it.pid));r.onsuccess=()=>res(r.result);r.onerror=()=>res(null)});
+   if(rec&&rec.blob)return urlCache[k]=URL.createObjectURL(rec.blob);
+  }
+  if(it.path&&mlpSupabase&&mlpUser){
+   const k='c'+it.path,c=urlCache[k];if(c&&c.t>Date.now())return c.u;
+   const {data}=await mlpSupabase.storage.from('planner-photos').createSignedUrl(it.path,3600);
+   if(data&&data.signedUrl){urlCache[k]={u:data.signedUrl,t:Date.now()+3000e3};return data.signedUrl}
+  }
+ }catch(_){}
+ return null;
+}
+
+/* ---------- selection toolbar ---------- */
+const COLORS=['#5b4339','#c07f7f','#7f9d74','#8a7fa8','#d2a24f','#ffffff'];
+function toolbar(){
+ const bar=document.getElementById('mlpSelBar');if(!bar)return;
+ const it=sel&&find(sel);
+ if(!it){sel=null;bar.innerHTML='<span class="mlp-help">Nothing selected yet. Tap an item on the page to edit it.</span>';return}
+ const b=(a,t,l,c='')=>`<button type="button" class="mlp-ib ${c}" data-mlp-act="${a}" aria-label="${l}" title="${l}">${t}</button>`;
+ let h='<div class="mlp-selrow">'+b('smaller','−','Smaller')+b('bigger','+','Bigger')+b('rotl','↺','Rotate left')+b('rotr','↻','Rotate right')+b('dup','⧉','Duplicate')+b('front','⬆','Bring to front')+b('del','🗑','Delete','del')+'</div>';
+ if((it.kind||'sticker')==='text')h+=`<textarea id="mlpSelText" rows="2" class="mlp-seltext" placeholder="Write something…">${e(it.text||'')}</textarea><div class="mlp-colors">${COLORS.map(c=>`<button type="button" class="mlp-sw ${(it.color||COLORS[0])===c?'on':''}" data-mlp-color="${c}" style="background:${c}" aria-label="Text colour"></button>`).join('')}</div>`;
+ bar.innerHTML=h;
+}
+function select(id){
+ if(sel===id)return;sel=id;
+ document.querySelectorAll('#mlpCanvas .mlp-item').forEach(n=>n.classList.toggle('sel',n.dataset.id===id));
+ toolbar();
+}
+function addItem(kind,props,x,y){
+ const l=list(true);
+ const it=Object.assign({id:mlpId(),kind,x:Math.round(clamp(x,5,95)*10)/10,y:Math.round(clamp(y,5,95)*10)/10,scale:1,rot:0},props);
+ l.push(it);sel=it.id;ctx=ctxKey();save();refreshPageBar();draw();toolbar();return it;
+}
+function addCenter(type){const n=list(false).length;addItem('sticker',{type},30+((n*17)%40),30+((n*23)%36))}
+function act(a){
+ const it=sel&&find(sel);if(!it)return;
+ const l=list(true),i=l.findIndex(x=>x.id===it.id);
+ if(a==='smaller')it.scale=Math.round(Math.max(.25,(it.scale||1)/1.15)*1000)/1000;
+ else if(a==='bigger')it.scale=Math.round(Math.min(5,(it.scale||1)*1.15)*1000)/1000;
+ else if(a==='rotl')it.rot=(((it.rot||0)-15+180)%360+360)%360-180;
+ else if(a==='rotr')it.rot=(((it.rot||0)+15+180)%360+360)%360-180;
+ else if(a==='front'){l.splice(i,1);l.push(it)}
+ else if(a==='dup'){const c=Object.assign({},it,{id:mlpId(),x:clamp((it.x??50)+4,5,95),y:clamp((it.y??50)+4,5,95)});l.push(c);sel=c.id}
+ else if(a==='del'){l.splice(i,1);sel=null}
+ save();draw();toolbar();
+}
+
+/* ---------- pointer handling ---------- */
+function ghostAt(x,y){if(!ghost||!drag)return;ghost.style.transform=`translate(${x-30}px,${y+drag.dy-30}px)`}
+function over(x,y){const t=document.elementFromPoint(x,y+(drag?drag.dy:0)),c=t&&t.closest&&t.closest('.mlp-canvas');document.querySelectorAll('.mlp-canvas.over').forEach(n=>{if(n!==c)n.classList.remove('over')});if(c)c.classList.add('over');return c}
+function autoScroll(){
+ if(!drag||drag.mode!=='new'||!drag.moved){raf=0;return}
+ const y=drag.y,h=innerHeight;
+ if(y<90)scrollBy(0,-Math.ceil((90-y)/5));else if(y>h-100)scrollBy(0,Math.ceil((y-(h-100))/5));
+ over(drag.x,drag.y);raf=requestAnimationFrame(autoScroll);
+}
+document.addEventListener('pointerdown',ev=>{
+ if(ev.pointerType==='mouse'&&ev.button!==0)return;
+ const t=ev.target;if(!t||!t.closest)return;
+ const ab=t.closest(TAPSEL);if(ab&&ev.pointerType!=='mouse')tapBtn={el:ab,pid:ev.pointerId,x:ev.clientX,y:ev.clientY};
+ const h=t.closest('.mlp-handle');
+ if(h){
+  const el=h.closest('.mlp-item'),it=find(el.dataset.id);if(!it)return;
+  const r=el.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2;
+  drag={mode:'handle',pid:ev.pointerId,el,it,cx,cy,d0:Math.hypot(ev.clientX-cx,ev.clientY-cy)||1,a0:Math.atan2(ev.clientY-cy,ev.clientX-cx),s0:it.scale||1,r0:it.rot||0,moved:false};
+  try{h.setPointerCapture(ev.pointerId)}catch(_){}ev.preventDefault();return;
+ }
+ const el=t.closest('.mlp-item');
+ if(el&&el.parentElement&&el.parentElement.id==='mlpCanvas'){
+  const it=find(el.dataset.id);if(!it)return;select(it.id);
+  const rect=el.parentElement.getBoundingClientRect();
+  drag={mode:'move',pid:ev.pointerId,el,it,sx:ev.clientX,sy:ev.clientY,ox:(it.x??50)-(ev.clientX-rect.left)/rect.width*100,oy:(it.y??50)-(ev.clientY-rect.top)/rect.height*100,moved:false};
+  try{el.setPointerCapture(ev.pointerId)}catch(_){}ev.preventDefault();return;
+ }
+ const tile=t.closest('.mlp-tile');
+ if(tile){
+  drag={mode:'new',pid:ev.pointerId,type:tile.dataset.mlpSticker,sx:ev.clientX,sy:ev.clientY,x:ev.clientX,y:ev.clientY,dy:ev.pointerType==='touch'?-36:0,moved:false};
+  try{tile.setPointerCapture(ev.pointerId)}catch(_){}ev.preventDefault();
+ }
+},{passive:false});
+document.addEventListener('pointermove',ev=>{
+ if(!drag||ev.pointerId!==drag.pid)return;
+ if(drag.mode==='move'){
+  if(!drag.moved&&Math.hypot(ev.clientX-drag.sx,ev.clientY-drag.sy)<4)return;
+  drag.moved=true;const rect=drag.el.parentElement.getBoundingClientRect();
+  drag.it.x=clamp((ev.clientX-rect.left)/rect.width*100+drag.ox,3,97);
+  drag.it.y=clamp((ev.clientY-rect.top)/rect.height*100+drag.oy,3,97);
+  apply(drag.el,drag.it);
+ }else if(drag.mode==='handle'){
+  drag.moved=true;
+  const d=Math.hypot(ev.clientX-drag.cx,ev.clientY-drag.cy)||1,a=Math.atan2(ev.clientY-drag.cy,ev.clientX-drag.cx);
+  drag.it.scale=Math.round(clamp(drag.s0*d/drag.d0,.25,5)*1000)/1000;
+  let r=(((drag.r0+(a-drag.a0)*180/Math.PI+180)%360)+360)%360-180;if(Math.abs(r)<4)r=0;
+  drag.it.rot=Math.round(r*10)/10;apply(drag.el,drag.it);
+ }else{
+  drag.x=ev.clientX;drag.y=ev.clientY;
+  if(!drag.moved&&Math.hypot(ev.clientX-drag.sx,ev.clientY-drag.sy)<6)return;
+  if(!drag.moved){
+   drag.moved=true;ghost=document.createElement('div');ghost.className='mlp-ghost';ghost.innerHTML=MLP_STICKERS[drag.type]?MLP_STICKERS[drag.type].svg:'';document.body.append(ghost);
+   if(!raf)raf=requestAnimationFrame(autoScroll);
+  }
+  ghostAt(ev.clientX,ev.clientY);over(ev.clientX,ev.clientY);
+ }
+});
+function endDrag(ev,cancel){
+ if(!drag||ev.pointerId!==drag.pid)return;
+ const d=drag;drag=null;
+ document.querySelectorAll('.mlp-canvas.over').forEach(n=>n.classList.remove('over'));
+ if(d.mode==='new'){
+  if(ghost){ghost.remove();ghost=null}
+  if(cancel)return;
+  if(d.moved){
+   const x=ev.clientX,y=ev.clientY+d.dy,t=document.elementFromPoint(x,y),cv=t&&t.closest&&t.closest('.mlp-canvas');
+   if(cv){const r=cv.getBoundingClientRect();addItem('sticker',{type:d.type},(x-r.left)/r.width*100,(y-r.top)/r.height*100)}
+  }else addCenter(d.type);
+ }else if(d.moved){save()}
+}
+document.addEventListener('pointerup',ev=>{
+ if(tapBtn&&ev.pointerId===tapBtn.pid){const tb=tapBtn;tapBtn=null;
+  if(Math.hypot(ev.clientX-tb.x,ev.clientY-tb.y)<10){const u=document.elementFromPoint(ev.clientX,ev.clientY);if(u&&u.closest(TAPSEL)===tb.el){lastTap={t:Date.now(),x:ev.clientX,y:ev.clientY};dispatch(tb.el,false)}}
+ }
+ endDrag(ev,false);
+});
+document.addEventListener('pointercancel',ev=>{if(tapBtn&&ev.pointerId===tapBtn.pid)tapBtn=null;endDrag(ev,true)});
+document.addEventListener('contextmenu',ev=>{if(ev.target.closest&&ev.target.closest('.mlp-tile,.mlp-item'))ev.preventDefault()});
+
+/* ---------- clicks (touch buttons also act on pointerup so a quick tap right after a drag is never lost) ---------- */
+const TAPSEL='[data-mlp-act],[data-mlp-color],[data-mlp-cat],[data-mlp-addtext],[data-mlp-addphoto],[data-mlp-page],[data-mlp-newpage]';
+let lastTap=null,tapBtn=null;
+function dispatch(t,kbd){
+ let b;
+ if(b=t.closest('[data-mlp-cat]')){cat=b.dataset.mlpCat;buildTray();return true}
+ if(b=t.closest('.mlp-tile')){if(kbd)addCenter(b.dataset.mlpSticker);return true}
+ if(b=t.closest('[data-mlp-act]')){act(b.dataset.mlpAct);return true}
+ if(b=t.closest('[data-mlp-color]')){const it=sel&&find(sel);if(it){it.color=b.dataset.mlpColor;save();draw();toolbar()}return true}
+ if(t.closest('[data-mlp-addtext]')){addItem('text',{text:'My moment ♡',color:'#5b4339'},50,50);const f=()=>{const ta=document.getElementById('mlpSelText');if(ta&&document.activeElement!==ta){ta.focus();ta.select()}};f();setTimeout(f,350);return true}
+ if(t.closest('[data-mlp-addphoto]')){const i=document.getElementById('mlpPhotoInput');if(i)i.click();return true}
+ if(b=t.closest('[data-mlp-page]')){mlpScrapCur=b.dataset.mlpPage;render();return true}
+ if(t.closest('[data-mlp-newpage]')){const p={id:mlpId(),title:'',date:iso(now()),note:'',items:[]};(S.scrapPages=Array.isArray(S.scrapPages)?S.scrapPages:[]).unshift(p);mlpScrapCur=p.id;save();render();return true}
+ if(t.closest('[data-mlp-delpage]')){const p=mlpScrapPage();if(p&&confirm('Delete this scrapbook page? Its photos, stickers and text will be removed.')){S.scrapPages=S.scrapPages.filter(x=>x.id!==p.id);mlpScrapCur=null;sel=null;save();render()}return true}
+ if(b=t.closest('[data-mlp-libdel]')){libDelete(b.closest('.scrap-tile'));return true}
+ if(b=t.closest('[data-mlp-libadd]')){libAdd(b);return true}
+ if(t.id==='mlpCanvas'){select(null);return true}
+ return false;
+}
+document.addEventListener('click',ev=>{
+ const t=ev.target;if(!t||!t.closest)return;
+ if(ev.detail>0&&lastTap&&Date.now()-lastTap.t<900&&Math.hypot(ev.clientX-lastTap.x,ev.clientY-lastTap.y)<14){lastTap=null;return}
+ dispatch(t,ev.detail===0);
+});
+document.addEventListener('input',ev=>{
+ const t=ev.target;
+ if(t.id==='mlpScrapTitle'){const p=mlpScrapPage(true);p.title=t.value;ctx=ctxKey();save();refreshPageBar()}
+ else if(t.id==='mlpScrapNote'){const p=mlpScrapPage(true);p.note=t.value;ctx=ctxKey();save();refreshPageBar()}
+ else if(t.id==='mlpSelText'){const it=sel&&find(sel);if(it){it.text=t.value;const bd=document.querySelector(`#mlpCanvas .mlp-item[data-id="${it.id}"] .mlp-body`);if(bd)bd.textContent=t.value;save()}}
+});
+document.addEventListener('keydown',ev=>{
+ if((ev.key==='Delete'||ev.key==='Backspace')&&sel&&cvEl()&&!/^(INPUT|TEXTAREA|SELECT)$/.test((document.activeElement&&document.activeElement.tagName)||'')){ev.preventDefault();act('del')}
+});
+
+/* ---------- photos ---------- */
+async function compress(file){
+ const url=URL.createObjectURL(file);
+ try{
+  const img=await new Promise((res,rej)=>{const i=new Image();i.onload=()=>res(i);i.onerror=()=>rej(new Error('Unsupported image'));i.src=url});
+  const k=Math.min(1,1000/Math.max(img.naturalWidth,img.naturalHeight)),w=Math.max(1,Math.round(img.naturalWidth*k)),h=Math.max(1,Math.round(img.naturalHeight*k));
+  const c=document.createElement('canvas');c.width=w;c.height=h;const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,w,h);x.drawImage(img,0,0,w,h);
+  const blob=await new Promise(r=>c.toBlob(r,'image/jpeg',.82));
+  return{blob,ar:h/w};
+ }finally{URL.revokeObjectURL(url)}
+}
+document.addEventListener('change',async ev=>{
+ if(ev.target.id!=='mlpPhotoInput')return;
+ const files=[...ev.target.files].filter(f=>f.type.startsWith('image/')||/\.(jpe?g|png|webp|gif|bmp)$/i.test(f.name));
+ ev.target.value='';
+ for(const f of files){
+  try{
+   const {blob,ar}=await compress(f);
+   const file=new File([blob],(f.name||'photo').replace(/\.[^.]+$/,'')+'.jpg',{type:'image/jpeg'});
+   let item=null;
+   const pid=await mlpPhotoAdd(file,path=>{if(item){item.path=path;save()}});
+   item=addItem('photo',{pid,dev:DEV,path:null,ar,rot:Math.round((Math.random()*10-5)*10)/10},32+Math.random()*36,32+Math.random()*36);
+  }catch(err){alert('Sorry, this photo could not be added. '+((err&&err.message)||''))}
+ }
+ const lib=document.getElementById('mlpLib');if(lib&&lib.open)renderLib();
+});
+async function renderLib(){
+ const host=document.getElementById('mlpScrapItems');if(!host)return;
+ host.innerHTML='<p class="mut">Loading…</p>';
+ let items=[];try{items=await mlpPhotoAll()}catch(_){}
+ host.innerHTML='';const seen=new Set();
+ items.forEach(rec=>{
+  if(rec.path)seen.add(rec.path);
+  const tile=document.createElement('div');tile.className='scrap-tile';tile.dataset.pid=rec.id;tile.dataset.path=rec.path||'';
+  tile.innerHTML='<button type="button" class="mlp-libpick" data-mlp-libadd aria-label="Add to this page"><img alt=""></button><button type="button" data-mlp-libdel aria-label="Delete photo">×</button>';
+  tile.querySelector('img').src=URL.createObjectURL(rec.blob);host.append(tile);
+ });
+ if(mlpSupabase&&mlpUser){
+  try{
+   const {data:remote,error}=await mlpSupabase.from('planner_photos').select('id,file_path,file_name').eq('user_id',mlpUser.id).order('created_at',{ascending:false});
+   if(!error)for(const r of (remote||[])){
+    if(seen.has(r.file_path))continue;
+    const {data:signed}=await mlpSupabase.storage.from('planner-photos').createSignedUrl(r.file_path,3600);
+    if(!signed||!signed.signedUrl)continue;
+    const tile=document.createElement('div');tile.className='scrap-tile';tile.dataset.path=r.file_path;tile.dataset.rid=r.id;
+    tile.innerHTML='<button type="button" class="mlp-libpick" data-mlp-libadd aria-label="Add to this page"><img alt=""></button><button type="button" data-mlp-libdel aria-label="Delete cloud photo">×</button>';
+    tile.querySelector('img').src=signed.signedUrl;host.append(tile);
+   }
+  }catch(_){}
+ }
+ if(!host.children.length)host.innerHTML='<p class="mut">No photos yet. Tap “📷 Photo” to add some.</p>';
+}
+function libAdd(btn){
+ const tile=btn.closest('.scrap-tile'),img=tile.querySelector('img');
+ const props={pid:tile.dataset.pid?Number(tile.dataset.pid):null,dev:tile.dataset.pid?DEV:null,path:tile.dataset.path||null};
+ if(img&&img.naturalWidth)props.ar=img.naturalHeight/img.naturalWidth;
+ addItem('photo',props,35+Math.random()*30,35+Math.random()*30);
+}
+async function libDelete(tile){
+ if(!tile||!confirm('Delete this photo from your library? It will also disappear from any scrapbook page using it.'))return;
+ try{
+  if(tile.dataset.pid)await mlpPhotoDelete(tile.dataset.pid);
+  if(tile.dataset.path&&mlpSupabase&&mlpUser){await mlpSupabase.storage.from('planner-photos').remove([tile.dataset.path]);if(tile.dataset.rid)await mlpSupabase.from('planner_photos').delete().eq('id',tile.dataset.rid);else await mlpSupabase.from('planner_photos').delete().eq('file_path',tile.dataset.path)}
+ }catch(_){}
+ renderLib();draw();
+}
+document.addEventListener('toggle',ev=>{if(ev.target&&ev.target.id==='mlpLib'&&ev.target.open)renderLib()},true);
+
+/* ---------- mount ---------- */
+function mount(){
+ const root=document.getElementById('mlpBoard');
+ if(!root){drag=null;return}
+ const key=ctxKey();if(key!==ctx){sel=null;ctx=key}
+ const cv=cvEl();fit(cv);
+ if(window.ResizeObserver)new ResizeObserver(()=>fit(cv)).observe(cv);
+ buildTray();draw();toolbar();
+}
+window.mlpMountBoard=mount;
+const prevRender=window.render;
+window.render=function(){const r=prevRender.apply(this,arguments);mount();return r};
+document.addEventListener('DOMContentLoaded',mount);
+})();
+
 
 /* Supabase account + cross-device planner sync.
    Add your project URL and anon/publishable key below after creating a Supabase project.
@@ -293,6 +769,9 @@ async function mlpLoadCloud(){
  if(data&&data.data){
    const local=JSON.parse(localStorage.getItem('mlp1')||'{}');
    const merged={...data.data,...local}; // preserve this device's existing entries on first connection
+   // keep decorations / scrapbook pages from both sides instead of letting one device overwrite the other
+   if(data.data.journalDecorations||local.journalDecorations)merged.journalDecorations={...(data.data.journalDecorations||{}),...(local.journalDecorations||{})};
+   if(data.data.scrapPages||local.scrapPages){const lp=local.scrapPages||[],ids=new Set(lp.map(p=>p.id));merged.scrapPages=lp.concat((data.data.scrapPages||[]).filter(p=>!ids.has(p.id)))}
    S=merged;localStorage.setItem('mlp1',JSON.stringify(S));
    await mlpSupabase.from('planner_data').upsert({user_id:mlpUser.id,data:S,updated_at:new Date().toISOString()},{onConflict:'user_id'});
    if(typeof render==='function')render();

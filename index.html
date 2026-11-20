@@ -151,6 +151,37 @@ a{color:var(--pink2)}
 .scrap-tile .mlp-libpick{position:static;display:block;width:100%;height:100%;padding:0;border:0;border-radius:0;background:none;cursor:pointer}
 .mlp-libpick img{width:100%;height:112px;object-fit:cover;display:block}
 @media print{.mlp-handle{display:none!important}.mlp-canvas:before{display:none}}
+
+/* Cover page */
+#mlpCover{position:fixed;inset:0;z-index:15;display:flex;align-items:center;justify-content:center;padding:24px;text-align:center;overflow:auto;background:radial-gradient(circle at 18% 12%,var(--pl),transparent 55%),radial-gradient(circle at 88% 92%,var(--pl),transparent 50%),var(--bg);transition:opacity .45s,visibility .45s}
+#mlpCover.gone{opacity:0;visibility:hidden;pointer-events:none}
+body.cover-on{overflow:hidden}
+body.cover-on #mlpCoverBtn{display:none}
+.mlp-cover-card{width:min(100%,380px);padding:34px 26px 26px;background:var(--card);border:1px solid var(--line);border-radius:30px;box-shadow:0 18px 60px rgba(120,80,70,.14)}
+.mlp-cover-deco{display:flex;justify-content:center;gap:6px;margin-bottom:14px}
+.mlp-cover-deco svg{width:34px;height:34px}
+.mlp-cover-kicker{font:700 11px Nunito,sans-serif;letter-spacing:.22em;text-transform:uppercase;color:var(--mut)}
+.mlp-cover-card h1{font:700 44px/1.05 'Cormorant Garamond',Georgia,serif;color:var(--pink2);margin:8px 0 8px}
+.mlp-cover-card p{color:var(--mut);margin:0 0 24px}
+.mlp-open{width:100%;padding:13px;font-size:16px;margin:0}
+.mlp-cover-card .mlp-account{width:100%;margin-top:14px;box-shadow:none;background:var(--bg)}
+@media print{#mlpCover{display:none!important}}
+
+/* Background pattern, mark & rights note */
+body:before,#mlpCover:before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='%23e3a9b0' opacity='.38'%3E%3Cpath d='M20 30c-8-6-9-11-5-13 3-1 5 1 5 3 0-2 2-4 5-3 4 2 3 7-5 13z'/%3E%3Ccircle cx='84' cy='20' r='4'/%3E%3Ccircle cx='90' cy='26' r='4'/%3E%3Ccircle cx='84' cy='32' r='4'/%3E%3Ccircle cx='78' cy='26' r='4'/%3E%3Cpath d='M80 96c-6-4-7-8-4-10 2-1 4 1 4 2 0-1 2-3 4-2 3 2 2 5-4 10z'/%3E%3Ccircle cx='30' cy='84' r='2'/%3E%3Ccircle cx='56' cy='58' r='1.6'/%3E%3Ccircle cx='108' cy='64' r='1.6'/%3E%3Ccircle cx='22' cy='108' r='1.6'/%3E%3C/g%3E%3Cg fill='%23f0d9a0' opacity='.7'%3E%3Ccircle cx='84' cy='26' r='2'/%3E%3C/g%3E%3C/svg%3E");background-size:120px 120px}
+#mlpCover:before{z-index:0}
+.mlp-cover-card{position:relative;z-index:1}
+.mlp-cover-by{font:italic 700 20px 'Cormorant Garamond',Georgia,serif;color:var(--pink2);margin:2px 0 14px}
+.mlp-cover-rights{position:relative;z-index:1;margin-top:18px;font-size:11px;line-height:1.5;color:var(--mut)}
+.mlp-foot{margin:10px 0 0 236px;padding:18px 20px 30px;text-align:center;font-size:12px;line-height:1.6;color:var(--mut);border-top:1px solid var(--line)}
+.mlp-foot b{display:block;font:italic 700 20px 'Cormorant Garamond',Georgia,serif;color:var(--pink2);margin-bottom:2px}
+@media(max-width:860px){.mlp-foot{margin-left:0;padding-bottom:240px}main{padding-bottom:16px}}
+@media print{body:before{display:none}.mlp-foot{margin-left:0;padding-bottom:10px}}
+
+.mlp-cover-theme{position:absolute;top:calc(14px + env(safe-area-inset-top,0px));right:14px;z-index:2;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:99px;padding:8px 14px;font:700 13px Nunito,sans-serif;cursor:pointer;box-shadow:0 4px 14px rgba(120,80,70,.12)}
+
+:root[data-theme=dark] body:before,:root[data-theme=dark] #mlpCover:before{opacity:.5}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]) body:before,:root:not([data-theme=light]) #mlpCover:before{opacity:.5}}
 </style>
 <link rel="manifest" href="./manifest.json">
 <meta name="theme-color" content="#fbf6ee">
@@ -161,6 +192,7 @@ a{color:var(--pink2)}
 </head>
 <body>
 <div id="app"><nav id="nav"></nav><main id="main"></main></div>
+<footer class="mlp-foot"><b>Mama Hayyan</b>© 2026 Mama Hayyan. All rights reserved.<br>This planner is for personal use only. Please do not copy, share, resell or redistribute it, free or paid, without written permission.</footer>
 <datalist id="cats"><option>Groceries</option><option>Kids</option><option>Home</option><option>Transport</option><option>Health</option><option>Fun</option><option>Other</option></datalist>
 <script>
 const $=s=>document.querySelector(s);
@@ -387,8 +419,28 @@ addEventListener('hashchange',route);route();
     <div class="mlp-player"><button class="btn" id="mlpMusicToggle" aria-label="Play background music">♫ Play</button><label class="mut" for="mlpVolume">Volume</label><input id="mlpVolume" class="mlp-volume" type="range" min="0" max="100" value="22" aria-label="Music volume"></div>
   </div>
   <button class="mlp-float" id="mlpMusicOpen" aria-expanded="false">♫ Music</button>
-  <button class="mlp-float mlp-account" id="mlpAccountButton">♡ Account · Local mode</button>
+  <button class="mlp-float" id="mlpCoverBtn">🌸 Cover</button>
 </div>
+<div id="mlpCover" role="dialog" aria-label="Welcome">
+ <button type="button" class="mlp-cover-theme" data-a="theme" aria-label="Toggle dark mode">◐ Light / Dark</button>
+ <div class="mlp-cover-card">
+  <div class="mlp-cover-deco" id="mlpCoverDeco"></div>
+  <div class="mlp-cover-kicker">Digital planner</div>
+  <h1>The Mom Life Planner</h1>
+  <p>Organize your home, family &amp; me time</p>
+  <button class="btn mlp-open" id="mlpOpen">Open ♡</button>
+  <button class="mlp-float mlp-account" id="mlpAccountButton">♡ Account · Local mode</button>
+ </div>
+ <div class="mlp-cover-rights" style="position:absolute;left:0;right:0;bottom:14px;padding:0 20px">© 2026 Mama Hayyan · All rights reserved.<br>For personal use only. Do not copy, share or resell without permission.</div>
+</div>
+<script>
+(()=>{
+ const c=document.getElementById('mlpCover');document.body.classList.add('cover-on');
+ document.getElementById('mlpCoverDeco').innerHTML=['flower','butterfly','heart','bow','flower2'].filter(k=>MLP_STICKERS[k]).map(k=>MLP_STICKERS[k].svg).join('');
+ document.getElementById('mlpOpen').onclick=()=>{c.classList.add('gone');document.body.classList.remove('cover-on');scrollTo(0,0)};
+ document.getElementById('mlpCoverBtn').onclick=()=>{c.classList.remove('gone');document.body.classList.add('cover-on')};
+})();
+</script>
 <div class="mlp-login" id="mlpLogin">
   <div class="mlp-login-card">
     <h2>Your planner, everywhere</h2>

@@ -467,7 +467,7 @@ addEventListener('hashchange',route);route();
     <button class="btn secondary" id="mlpSignUp">Create account</button>
     <button class="btn secondary" id="mlpGoogle">Continue with Google</button>
     <button class="x" id="mlpClose" style="float:right;margin-top:12px">Close ×</button>
-    <div class="mlp-login-status" id="mlpAuthStatus">Cloud login needs your Supabase project configuration.</div>
+    <div class="mlp-login-status" id="mlpAuthStatus">Welcome back! Sign in to access your planner.</div>
   </div>
 </div>
 <script>
@@ -829,11 +829,11 @@ const MLP_SUPABASE_ANON_KEY='sb_publishable_t7mh6UQKi5sEHXbolO6p6g_oJOxbmdk';
 let mlpSupabase=null,mlpUser=null,mlpSyncTimer=null;
 const mlpStatus=(msg)=>{const el=document.getElementById('mlpAuthStatus');if(el)el.textContent=msg};
 const mlpCloudReady=()=>MLP_SUPABASE_URL.startsWith('https://')&&!MLP_SUPABASE_URL.includes('YOUR_')&&MLP_SUPABASE_ANON_KEY&&!MLP_SUPABASE_ANON_KEY.includes('YOUR_');
-function mlpSetAccountLabel(){const b=document.getElementById('mlpAccountButton');if(b)b.textContent=mlpUser?'♡ '+(mlpUser.email||'Signed in')+' · Log out':'♡ Account · '+(mlpCloudReady()?'Sign in':'Setup needed')}
+function mlpSetAccountLabel(){const b=document.getElementById('mlpAccountButton');if(b)b.textContent=mlpUser?'♡ '+(mlpUser.email||'Signed in')+' · Log out':'♡ Account · '+(mlpCloudReady()?'Sign in':'Unavailable')}
 async function mlpLoadCloud(){
  if(!mlpSupabase||!mlpUser)return;
  const {data,error}=await mlpSupabase.from('planner_data').select('data').eq('user_id',mlpUser.id).maybeSingle();
- if(error){mlpStatus('Cloud read error: '+error.message);return}
+ if(error){mlpStatus('Could not load your planner. Please try again.');return}
  if(data&&data.data){
    const local=JSON.parse(localStorage.getItem('mlp1')||'{}');
    const merged={...data.data,...local}; // preserve this device's existing entries on first connection
@@ -846,33 +846,33 @@ async function mlpLoadCloud(){
    mlpStatus('Signed in. Your planner is syncing.');
  }else{
    const {error:upErr}=await mlpSupabase.from('planner_data').upsert({user_id:mlpUser.id,data:S,updated_at:new Date().toISOString()},{onConflict:'user_id'});
-   mlpStatus(upErr?'Cloud save error: '+upErr.message:'Your existing planner has been copied to your account.');
+   mlpStatus(upErr?'Could not save your planner. Please try again.':'Your existing planner has been copied to your account.');
  }
 }
 window.__mlpCloudSave=(state)=>{
  if(!mlpSupabase||!mlpUser)return;
  clearTimeout(mlpSyncTimer);
- mlpSyncTimer=setTimeout(async()=>{const {error}=await mlpSupabase.from('planner_data').upsert({user_id:mlpUser.id,data:state,updated_at:new Date().toISOString()},{onConflict:'user_id'});if(error)mlpStatus('Sync issue: '+error.message)},900);
+ mlpSyncTimer=setTimeout(async()=>{const {error}=await mlpSupabase.from('planner_data').upsert({user_id:mlpUser.id,data:state,updated_at:new Date().toISOString()},{onConflict:'user_id'});if(error)mlpStatus('Your planner could not sync. Please try again.')},900);
 };
 async function mlpInitAuth(){
- if(!mlpCloudReady()){mlpSetAccountLabel();mlpStatus('To activate accounts, add your Supabase URL and anon/publishable key in the code.');return}
+ if(!mlpCloudReady()){mlpSetAccountLabel();mlpStatus('Account sign-in is temporarily unavailable. Please try again later.');return}
  try{
   const lib=await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm');
   mlpSupabase=lib.createClient(MLP_SUPABASE_URL,MLP_SUPABASE_ANON_KEY);
   const {data}=await mlpSupabase.auth.getSession();mlpUser=data.session?.user||null;
   mlpSetAccountLabel();if(mlpUser)await mlpLoadCloud();
   mlpSupabase.auth.onAuthStateChange(async(_event,session)=>{mlpUser=session?.user||null;mlpSetAccountLabel();if(mlpUser)await mlpLoadCloud()});
- }catch(err){mlpStatus('Could not connect to Supabase: '+err.message)}
+ }catch(err){mlpStatus('Could not connect right now. Please try again.')}
 }
 document.getElementById('mlpAccountButton').addEventListener('click',async()=>{
  if(mlpUser&&mlpSupabase){if(confirm('Log out of your Mom Life Planner account?'))await mlpSupabase.auth.signOut();return}
  document.getElementById('mlpLogin').classList.add('open');
- if(!mlpCloudReady())mlpStatus('Supabase setup is still needed before login can work.');
+ if(!mlpCloudReady())mlpStatus('Account sign-in is temporarily unavailable. Please try again later.');
 });
 document.getElementById('mlpClose').onclick=()=>document.getElementById('mlpLogin').classList.remove('open');
-document.getElementById('mlpSignIn').onclick=async()=>{if(!mlpSupabase)return mlpStatus('Please finish Supabase setup first.');const email=document.getElementById('mlpEmail').value,password=document.getElementById('mlpPassword').value;const {error}=await mlpSupabase.auth.signInWithPassword({email,password});mlpStatus(error?error.message:'Signing in…')};
-document.getElementById('mlpSignUp').onclick=async()=>{if(!mlpSupabase)return mlpStatus('Please finish Supabase setup first.');const email=document.getElementById('mlpEmail').value,password=document.getElementById('mlpPassword').value;if(password.length<6)return mlpStatus('Password must be at least 6 characters.');const {error}=await mlpSupabase.auth.signUp({email,password});mlpStatus(error?error.message:'Check your email to confirm your account.')};
-document.getElementById('mlpGoogle').onclick=async()=>{if(!mlpSupabase)return mlpStatus('Please finish Supabase setup first.');const {error}=await mlpSupabase.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.origin+location.pathname}});if(error)mlpStatus(error.message)};
+document.getElementById('mlpSignIn').onclick=async()=>{if(!mlpSupabase)return mlpStatus('Account sign-in is temporarily unavailable. Please try again later.');const email=document.getElementById('mlpEmail').value,password=document.getElementById('mlpPassword').value;const {error}=await mlpSupabase.auth.signInWithPassword({email,password});mlpStatus(error?error.message:'Signing in…')};
+document.getElementById('mlpSignUp').onclick=async()=>{if(!mlpSupabase)return mlpStatus('Account sign-in is temporarily unavailable. Please try again later.');const email=document.getElementById('mlpEmail').value,password=document.getElementById('mlpPassword').value;if(password.length<6)return mlpStatus('Password must be at least 6 characters.');const {error}=await mlpSupabase.auth.signUp({email,password});mlpStatus(error?error.message:'Check your email to confirm your account.')};
+document.getElementById('mlpGoogle').onclick=async()=>{if(!mlpSupabase)return mlpStatus('Account sign-in is temporarily unavailable. Please try again later.');const {error}=await mlpSupabase.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.origin+location.pathname}});if(error)mlpStatus(error.message)};
 mlpInitAuth();
 </script>
 

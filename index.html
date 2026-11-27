@@ -314,11 +314,12 @@ const SEC=[
 ['finance','Finance','coin','m','Know where your money goes',[F('fin'),T('budget','Monthly household budget','m',['Category:k','Planned:n','Actual:a','Left:l'],1,['Groceries','Kids','Daycare / Nursery','Babysitter','School / Kindergarten','Milk & Diapers','Child Essentials','Lunchbox / School Meals','Home','Transport','Health','Fun']),T('inc','Income tracker','m',['Date:d','Source','Amount:n'],2),T('exp','Expenses tracker','m',['Date:d','What','Category:k','Amount:n'],3),T('childcareFees','Childcare & School Fees','m',['Child','Provider / School','Fee type','Due date:d','Amount:n','Paid:c']),T('bills','Bills tracker','m',['Bill','Due:d','Amount:n','Paid:c'],2),T('sav','Savings goals','',['Goal','Target:n','Saved:n','Progress:p']),F('finov')]],
 ['selfcare','Self-care','flower','d','You matter too, mama',[L('sc','Daily self-care checklist','d','Add something kind for me…',SCDEF),{y:'D',id:'water',t:'Water intake',s:'d',n:8},W('sleep','Sleep tracker','w','num','hrs'),W('mood','Mood tracker','w','mood'),W('ex','Exercise tracker','w','num','min'),L('grat','Gratitude journal','d','I’m grateful for…'),L('pgoals','Personal goals','','A goal for me…'),T('metime','Me-time planner','w',['Day','Time','Activity','Done:c'])]],
 ['journal','Journal','book','d','Capture the little moments',[N('jr','Daily journal','d','Dear diary…'),F('journalCanvas'),L('grat','Things I’m grateful for','d','I’m grateful for…'),T('mem','My motherhood memories','',['Date:d','Memory:x']),T('kidm','Kids’ memorable moments','',['Date:d','Child','Moment:x']),N('mrefl','Monthly reflection','m','What went well? What was hard? What do I want for next month?'),N('growth','Personal growth','m','What am I learning? How am I growing?')]],
-['worklife','Work & Life','week','w','Make room for work, family and yourself',[T('workSchedule','Weekly Work Schedule','w',['Day','Start Time','End Time','Work / Location','Notes'],null,FD),L('beforeWork','Before Work Checklist','d','Add a task…',['Prepare work bag','Prepare child’s bag','Pack milk / bottles','Prepare lunch or snacks','Check keys, wallet and essentials']),L('afterWork','After Work Checklist','d','Add a task…',['Pick up child','Unpack bags and lunchbox','Prepare items for tomorrow','Spend time together','Take a little time to unwind']),L('workLifeTasks','Work & Life To-do List','w','Add a work or family task…')]],
+['worklife','Work & Life','week','w','Make room for work, family and yourself',[T('workSchedule','Weekly Work Schedule','w',['Day','Start Time','End Time','Work / Location','Notes'],null,FD),L('beforeWork','Before Work Checklist','','Add your own task…'),L('afterWork','After Work Checklist','','Add your own task…'),L('workLifeTasks','Work & Life To-do List','','Add a work or family task…')]],
 ['daycare','Daycare & Babysitter','family','d','Keep your child’s daily care details in one place',[T('daycareLog','Daily Daycare & Babysitter Log','',['Date:d','Child','Drop-off','Pick-up','Milk','Meals','Nap','Mood','Activities / Notes']),T('daycareAttendance','Childcare Attendance','',['Date:d','Child','Provider','Drop-off','Pick-up','Attendance']),T('daycareNotes','Notes for Daycare / Babysitter','',['Date:d','Child','Message / Reminder','Done:c'])]]];
 SEC.splice(SEC.findIndex(x=>x[0]==='journal')+1,0,['scrapbook','Scrapbook','bear','', 'Keep your favourite little memories in one place',[F('scrapbook')]]);
 SEC.push(['motherhood','Motherhood Corner','flower','','Mini books of everyday motherhood know-how',[F('motherhoodCorner')]]);
-const K=w=>w.id+(w.s?'@'+sc(w.s):'');
+// Work & Life checklists intentionally use unscoped keys: mama-created tasks and Done states persist across dates.
+const K=w=>w.id+((w.s||w.y==='L')?'@'+sc(w.s||'d'):'');
 const lab=n=>n=='d'?cur.toLocaleDateString(undefined,{weekday:'long',day:'numeric',month:'long',year:'numeric'}):n=='w'?'Week of '+mon(cur).toLocaleDateString(undefined,{day:'numeric',month:'short'}):cur.toLocaleDateString(undefined,{month:'long',year:'numeric'});
 const hr=i=>(i%12||12)+(i<12?' AM':' PM');
 
@@ -537,7 +538,19 @@ const prev=window.render;window.render=function(){const r=prev.apply(this,argume
 
 const R={
 F:w=>F_[w.n](w),
-L(w,k){const a=S[k]||(S[k]=(w.def||[]).map(t=>({t,d:0})));return card(`<h3>${w.t}</h3>`+cw(()=>prog(S[k]),'div','pr')+a.map((i,r)=>`<div class="it"><input type="checkbox" data-k="${k}" data-r="${r}" data-f="d" ${i.d?'checked':''}><input class="tx" data-k="${k}" data-r="${r}" data-f="t" value="${e(i.t)}"><button class="x" data-a="del" data-k="${k}" data-r="${r}" aria-label="Delete">×</button></div>`).join('')+`<div class="it add"><input class="addin" data-k="${k}" placeholder="${e(w.ph||'Add…')}"><button class="btn" data-a="add" data-k="${k}">Add</button></div>`)},
+L(w,k){
+ const tk='__mlp_checklist_template_'+w.id;
+ // Keep one reusable task list per checklist, while each day/week/month has its own Done state and edits.
+ if(!Array.isArray(S[tk])){
+  let seed=Array.isArray(S[k])?S[k]:(Array.isArray(S[w.id])?S[w.id]:null);
+  if(!seed){const oldKeys=Object.keys(S).filter(x=>x.startsWith(w.id+'@')&&Array.isArray(S[x])).sort();if(oldKeys.length)seed=S[oldKeys[oldKeys.length-1]];}
+  if(!seed)seed=w.def||[];
+  S[tk]=seed.map(x=>({t:typeof x==='string'?x:(x.t||''),d:0}));
+ }
+ if(!Array.isArray(S[k]))S[k]=S[tk].map(x=>({t:x.t,d:0}));
+ const a=S[k];
+ return card(`<h3>${w.t}</h3>`+cw(()=>prog(S[k]),'div','pr')+a.map((i,r)=>`<div class="it"><input type="checkbox" data-k="${k}" data-r="${r}" data-f="d" ${i.d?'checked':''}><input class="tx" data-k="${k}" data-r="${r}" data-f="t" value="${e(i.t)}"><button class="x" data-a="del" data-k="${k}" data-r="${r}" aria-label="Delete">×</button></div>`).join('')+`<div class="it add"><input class="addin" data-k="${k}" placeholder="${e(w.ph||'Add…')}"><button class="btn" data-a="add" data-k="${k}">Add</button></div>`)
+ },
 N:(w,k)=>card(`<h3>${w.t}</h3><textarea data-k="${k}" placeholder="${e(w.ph||'Write here…')}">${e(S[k])}</textarea>`),
 Z(w,k){const o=S[k]||{};let h='';for(let i=5;i<=22;i++)h+=`<div class="it"><b class="lb">${hr(i)}</b><input data-k="${k}" data-f="h${i}" value="${e(o['h'+i])}"></div>`;return card(`<h3>${w.t}</h3>`+h)},
 G(w,k){const o=S[k]||{},one=w.cols.length==1,i=(r,c)=>`<input data-k="${k}" data-f="${r}_${c}" value="${e(o[r+'_'+c])}" placeholder="${e(one?w.ph||'':'')}">`;return card(`<h3>${w.t}</h3>`+(one?w.rows.map((l,r)=>`<div class="it"><b class="lb">${l}</b>${i(r,0)}</div>`).join(''):`<div class="tw"><table><tr><th></th>${w.cols.map(c=>`<th>${c}</th>`).join('')}</tr>${w.rows.map((l,r)=>`<tr><td class="lb">${l.slice(0,3)}</td>${w.cols.map((c,j)=>`<td>${i(r,j)}</td>`).join('')}</tr>`).join('')}</table></div>`),one?'':'wide')},
